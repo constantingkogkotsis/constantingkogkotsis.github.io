@@ -75,11 +75,26 @@
     }
 
     .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
       font-family: Georgia, "Times New Roman", serif;
       font-size: 1.05rem;
       letter-spacing: 0.02em;
       color: var(--text);
       white-space: nowrap;
+    }
+
+    .brand-symbol {
+      display: inline-grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--accent);
+      background: rgba(255, 255, 255, 0.035);
+      font-size: 0.95rem;
     }
 
     .nav-links {
@@ -373,12 +388,16 @@
   <header>
     <div class="container">
       <nav>
-        <a class="brand" href="#">Constantinos Gkogkotsis</a>
+        <a class="brand" href="#">
+          <span class="brand-symbol">∫∂</span>
+          <span>Constantinos Gkogkotsis</span>
+        </a>
 
         <div class="nav-links">
           <a href="#direction">Direction</a>
           <a href="#projects">Projects</a>
           <a href="#notes">Notes</a>
+          <a href="#updates">Updates</a>
           <a href="cv.html">CV</a>
           <a href="#contact">Contact</a>
         </div>
@@ -525,13 +544,14 @@
 
           <article class="card wide">
             <div class="project-title">
-              <h3>Computational algebra and polynomial systems</h3>
+              <h3>Mixed Volume Reservoir</h3>
               <span class="status">In preparation</span>
             </div>
             <p>
-              Background work around Gröbner bases, resultants, polynomial systems,
-              and the computational side of algebraic geometry. More material will
-              be added when it reaches a serious and presentable form.
+              A growing collection around mixed volumes, polynomial systems,
+              computational algebra, algorithms, Julia experimentation, and the
+              material I gather while working toward a serious understanding of
+              this direction.
             </p>
           </article>
         </div>
@@ -572,6 +592,45 @@
               <a href="cv.html">Curriculum Vitae</a>.
             </p>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="updates">
+      <div class="container">
+        <div class="section-head">
+          <h2>Events and mathematical watchlist</h2>
+          <p class="section-intro">
+            A small record of events I plan to attend or watch, together with
+            papers, talks, tools, and developments from mathematical directions
+            I want to keep following.
+          </p>
+        </div>
+
+        <div class="grid">
+          <article class="card">
+            <div class="project-title">
+              <h3>Events I plan to attend or watch</h3>
+              <span class="status">Events</span>
+            </div>
+            <p>
+              Seminars, lectures, conferences, interviews, lecture series, and
+              other mathematical events that I intend to attend, watch, or study
+              from afterwards.
+            </p>
+          </article>
+
+          <article class="card wide">
+            <div class="project-title">
+              <h3>Mathematical watchlist</h3>
+              <span class="status">Papers / talks / tools</span>
+            </div>
+            <p>
+              A curated place for recent papers, talks, software, books, lecture
+              notes, and mathematical developments connected to the areas I am
+              interested in and may want to understand more seriously later.
+            </p>
+          </article>
         </div>
 
         <p class="quote-block" style="margin-top: 42px;">
