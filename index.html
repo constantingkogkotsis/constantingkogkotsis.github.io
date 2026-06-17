@@ -1,85 +1,646 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>Constantinos Gkogkotsis</title>
 
   <style>
+    :root {
+      --bg: #080a0f;
+      --bg-soft: #10131b;
+      --panel: rgba(255, 255, 255, 0.045);
+      --panel-strong: rgba(255, 255, 255, 0.075);
+      --text: #f2f2f0;
+      --muted: #aeb4c1;
+      --muted-2: #7f8796;
+      --line: rgba(255, 255, 255, 0.12);
+      --accent: #b7c9ff;
+      --accent-strong: #e5d6ff;
+      --gold: #d7c58f;
+      --max: 1120px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
-      font-family: Georgia, serif;
-      max-width: 850px;
-      margin: 50px auto;
-      padding: 0 20px;
-      line-height: 1.6;
-      color: #111;
-      background: #fdfdfd;
-    }
-
-    h1, h2 {
-      font-family: Arial, sans-serif;
-    }
-
-    h1 {
-      border-bottom: 2px solid #222;
-      padding-bottom: 10px;
-    }
-
-    .subtitle {
-      color: #444;
-      font-size: 1.1em;
+      margin: 0;
+      font-family:
+        Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 18% 8%, rgba(119, 144, 255, 0.16), transparent 31%),
+        radial-gradient(circle at 86% 12%, rgba(215, 197, 143, 0.10), transparent 28%),
+        linear-gradient(180deg, #080a0f 0%, #0b0e14 45%, #080a0f 100%);
+      color: var(--text);
+      line-height: 1.65;
     }
 
     a {
-      color: #0645ad;
+      color: var(--accent);
       text-decoration: none;
     }
 
     a:hover {
       text-decoration: underline;
     }
+
+    .container {
+      width: min(var(--max), 92vw);
+      margin: 0 auto;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(18px);
+      background: rgba(8, 10, 15, 0.78);
+      border-bottom: 1px solid var(--line);
+    }
+
+    nav {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.05rem;
+      letter-spacing: 0.02em;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      flex-wrap: wrap;
+      font-size: 0.94rem;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .hero {
+      padding: 118px 0 86px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 56px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--gold);
+      font-size: 0.82rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 34px;
+      height: 1px;
+      background: var(--gold);
+      opacity: 0.8;
+    }
+
+    h1 {
+      margin: 0 0 26px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 500;
+      font-size: clamp(3rem, 7vw, 6.4rem);
+      line-height: 0.95;
+      letter-spacing: -0.07em;
+    }
+
+    .hero-text {
+      max-width: 760px;
+      color: var(--muted);
+      font-size: clamp(1.08rem, 1.6vw, 1.24rem);
+    }
+
+    .hero-text strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 34px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 18px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.035);
+      color: var(--text);
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: 0.18s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      text-decoration: none;
+      border-color: rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: #070910;
+      border-color: transparent;
+    }
+
+    .portrait-card {
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 30px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.025));
+      box-shadow: 0 30px 90px rgba(0,0,0,0.30);
+    }
+
+    .symbol {
+      display: grid;
+      place-items: center;
+      aspect-ratio: 1 / 1;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at center, rgba(183, 201, 255, 0.14), transparent 60%),
+        rgba(255, 255, 255, 0.025);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(4rem, 9vw, 7rem);
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    .card-caption {
+      color: var(--muted);
+      font-size: 0.98rem;
+      margin: 0;
+    }
+
+    section {
+      padding: 76px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: 0.7fr 1.3fr;
+      gap: 40px;
+      align-items: start;
+      margin-bottom: 34px;
+    }
+
+    h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2rem, 3.8vw, 3.2rem);
+      font-weight: 500;
+      letter-spacing: -0.045em;
+      line-height: 1.05;
+    }
+
+    .section-intro {
+      color: var(--muted);
+      font-size: 1.05rem;
+      margin: 0;
+      max-width: 760px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .card {
+      min-height: 100%;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 24px;
+      background: var(--panel);
+    }
+
+    .card:hover {
+      background: var(--panel-strong);
+    }
+
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 1.08rem;
+      letter-spacing: -0.015em;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .card ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .wide {
+      grid-column: span 2;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 18px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      background: rgba(255,255,255,0.025);
+    }
+
+    .project-title {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+
+    .status {
+      color: var(--muted-2);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      white-space: nowrap;
+    }
+
+    .quote-block {
+      border-left: 2px solid var(--gold);
+      padding-left: 22px;
+      color: var(--muted);
+      max-width: 850px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.35rem;
+      line-height: 1.45;
+    }
+
+    footer {
+      padding: 34px 0 48px;
+      color: var(--muted-2);
+      font-size: 0.92rem;
+    }
+
+    .footer-grid {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid,
+      .section-head {
+        grid-template-columns: 1fr;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .wide {
+        grid-column: span 1;
+      }
+
+      .hero {
+        padding-top: 82px;
+      }
+
+      nav {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 18px 0;
+      }
+    }
   </style>
 </head>
 
 <body>
-  <h1>Constantinos Gkogkotsis</h1>
+  <header>
+    <div class="container">
+      <nav>
+        <a class="brand" href="#">Constantinos Gkogkotsis</a>
 
-  <p class="subtitle">
-    Undergraduate Mathematics Student<br>
-    National and Kapodistrian University of Athens
-  </p>
+        <div class="nav-links">
+          <a href="#about">About</a>
+          <a href="#direction">Direction</a>
+          <a href="#projects">Projects</a>
+          <a href="#notes">Notes</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </nav>
+    </div>
+  </header>
 
-  <h2>About</h2>
-  <p>
-    I am interested in theoretical mathematics, with particular focus on
-    category theory, logic, algebra, geometry, algorithms, graph theory,
-    and computational algebra.
-  </p>
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow">Mathematics · Athens</div>
 
-  <h2>Current Mathematical Interests</h2>
-  <ul>
-    <li>Category Theory and Logic</li>
-    <li>Algebra, Geometry, and Topology</li>
-    <li>Computational Algebra and Gröbner Bases</li>
-    <li>Mixed Volumes and DMM Bounds</li>
-    <li>Algorithms and Discrete Mathematics</li>
-  </ul>
+          <h1>Structure, proof, and computation.</h1>
 
-  <h2>Projects</h2>
-  <ul>
-    <li>DMM bound and mixed volume implementation</li>
-    <li>Computational Algebra study notes</li>
-    <li>Mathematical problem-solving finalizers</li>
-  </ul>
+          <p class="hero-text">
+            I am <strong>Constantinos Gkogkotsis</strong>, an undergraduate student
+            in the Department of Mathematics at the National and Kapodistrian
+            University of Athens.
+          </p>
 
-  <h2>Documents</h2>
-  <ul>
-    <li>CV — coming soon</li>
-    <li>Notes — coming soon</li>
-  </ul>
+          <p class="hero-text">
+            My interests are centered around algebra, geometry, and logic, together
+            with the computational methods through which theoretical structures can
+            become explicit.
+          </p>
 
-  <h2>Contact</h2>
-  <p>
-    Email:constantingkogkotsis@gmail.com
-  </p>
+          <div class="hero-actions">
+            <a class="btn primary" href="#projects">Selected projects</a>
+            <a class="btn" href="#notes">Notes and writing</a>
+            <a class="btn" href="#contact">Contact</a>
+          </div>
+        </div>
+
+        <aside class="portrait-card">
+          <div class="symbol">∫∂</div>
+          <p class="card-caption">
+            I am drawn to the point where abstract mathematical structures meet
+            concrete mechanisms: examples, invariants, algorithms, and proofs.
+          </p>
+        </aside>
+      </div>
+    </section>
+
+    <section id="about">
+      <div class="container">
+        <div class="section-head">
+          <h2>About</h2>
+          <p class="section-intro">
+            I use this website as a public mathematical notebook: a place for selected
+            expository notes, talks, projects, and records of mathematical work in
+            progress.
+          </p>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <h3>Institution</h3>
+            <p>
+              Department of Mathematics<br />
+              National and Kapodistrian University of Athens<br />
+              Athens, Greece
+            </p>
+          </div>
+
+          <div class="card">
+            <h3>Current orientation</h3>
+            <p>
+              Theoretical mathematics, especially algebra, geometry, and logic,
+              with computational tools as a second axis.
+            </p>
+          </div>
+
+          <div class="card">
+            <h3>Postgraduate direction</h3>
+            <p>
+              I am preparing for postgraduate work in theoretical mathematics,
+              with emphasis on structural and computational viewpoints.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="direction">
+      <div class="container">
+        <div class="section-head">
+          <h2>Mathematical direction</h2>
+          <p class="section-intro">
+            My present center of gravity is the interaction between algebraic,
+            geometric, logical, and computational methods. I am interested in
+            mathematics both as abstract structure and as something that can be
+            made explicit through calculations, algorithms, and examples.
+          </p>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <h3>Primary axis</h3>
+            <ul>
+              <li>Algebra</li>
+              <li>Geometry</li>
+              <li>Logic</li>
+              <li>Structural mathematics</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3>Computational axis</h3>
+            <ul>
+              <li>Algorithms</li>
+              <li>Computational algebra</li>
+              <li>Graph-theoretic methods</li>
+              <li>Explicit calculation</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3>Developing interests</h3>
+            <ul>
+              <li>Polynomial systems</li>
+              <li>Gröbner bases</li>
+              <li>Mixed-volume methods</li>
+              <li>Connections between theory and computation</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="tag-row">
+          <span class="tag">Algebra</span>
+          <span class="tag">Geometry</span>
+          <span class="tag">Logic</span>
+          <span class="tag">Algorithms</span>
+          <span class="tag">Computational Algebra</span>
+          <span class="tag">Graph Theory</span>
+          <span class="tag">Polynomial Systems</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects">
+      <div class="container">
+        <div class="section-head">
+          <h2>Selected projects</h2>
+          <p class="section-intro">
+            A small selection of projects, talks, and notes. Some are complete;
+            others are being developed into more polished mathematical writing.
+          </p>
+        </div>
+
+        <div class="grid">
+          <article class="card wide">
+            <div class="project-title">
+              <h3>Traversing a convex polygon</h3>
+              <span class="status">Algorithms</span>
+            </div>
+            <p>
+              A dynamic-programming project on traversing a convex polygon, developed
+              in the context of algorithm design and analysis.
+            </p>
+          </article>
+
+          <article class="card">
+            <div class="project-title">
+              <h3>λ-calculus</h3>
+              <span class="status">Talk</span>
+            </div>
+            <p>
+              An expository talk connected to recursive functions, computability,
+              and formal models of calculation.
+            </p>
+          </article>
+
+          <article class="card">
+            <div class="project-title">
+              <h3>Why the circle is not a line</h3>
+              <span class="status">Note</span>
+            </div>
+            <p>
+              A topology note collecting several different obstructions to a
+              homeomorphism between the circle and the real line.
+            </p>
+          </article>
+
+          <article class="card wide">
+            <div class="project-title">
+              <h3>Computational algebra and polynomial systems</h3>
+              <span class="status">In preparation</span>
+            </div>
+            <p>
+              Background work around Gröbner bases, resultants, polynomial systems,
+              and the computational side of algebraic geometry. More material will
+              be added when it reaches a serious and presentable form.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="notes">
+      <div class="container">
+        <div class="section-head">
+          <h2>Notes and writing</h2>
+          <p class="section-intro">
+            This section will eventually contain selected notes, short expository
+            texts, and mathematical documents. The goal is to keep only material
+            that is sufficiently organized to be useful outside its original context.
+          </p>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <h3>Expository notes</h3>
+            <p>
+              Short mathematical texts on definitions, examples, proofs, and
+              structural distinctions.
+            </p>
+          </div>
+
+          <div class="card">
+            <h3>Talks</h3>
+            <p>
+              Material connected to presentations and seminar-style exposition.
+            </p>
+          </div>
+
+          <div class="card">
+            <h3>CV</h3>
+            <p>
+              A current academic CV will be added here.
+              <!-- Later, replace this sentence with:
+              <a href="cv.pdf">Download CV</a>
+              -->
+            </p>
+          </div>
+        </div>
+
+        <p class="quote-block" style="margin-top: 42px;">
+          I want to understand broad mathematical landscapes without losing the
+          concrete mechanisms that make them work.
+        </p>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="container">
+        <div class="section-head">
+          <h2>Contact</h2>
+          <p class="section-intro">
+            Email:
+            <a href="mailto:constgogotsis@gmail.com">constgogotsis@gmail.com</a>
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-grid">
+      <div>© 2026 Constantinos Gkogkotsis</div>
+      <div>Personal academic website</div>
+    </div>
+  </footer>
 </body>
 </html>
