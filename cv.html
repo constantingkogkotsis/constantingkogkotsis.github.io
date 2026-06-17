@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>CV | Constantinos Gkogkotsis</title>
+
+  <style>
+    :root {
+      --bg: #080a0f;
+      --bg-soft: #10131b;
+      --panel: rgba(255, 255, 255, 0.045);
+      --panel-strong: rgba(255, 255, 255, 0.075);
+      --text: #f2f2f0;
+      --muted: #aeb4c1;
+      --muted-2: #7f8796;
+      --line: rgba(255, 255, 255, 0.12);
+      --accent: #b7c9ff;
+      --accent-strong: #e5d6ff;
+      --gold: #d7c58f;
+      --max: 1120px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 18% 8%, rgba(119, 144, 255, 0.16), transparent 31%),
+        radial-gradient(circle at 86% 12%, rgba(215, 197, 143, 0.10), transparent 28%),
+        linear-gradient(180deg, #080a0f 0%, #0b0e14 45%, #080a0f 100%);
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      width: min(var(--max), 92vw);
+      margin: 0 auto;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(18px);
+      background: rgba(8, 10, 15, 0.78);
+      border-bottom: 1px solid var(--line);
+    }
+
+    nav {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.05rem;
+      letter-spacing: 0.02em;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      flex-wrap: wrap;
+      font-size: 0.94rem;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    main {
+      padding: 92px 0 76px;
+    }
+
+    .cv-hero {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 48px;
+      align-items: end;
+      padding-bottom: 54px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 48px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--gold);
+      font-size: 0.82rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 34px;
+      height: 1px;
+      background: var(--gold);
+      opacity: 0.8;
+    }
+
+    h1 {
+      margin: 0 0 22px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 500;
+      font-size: clamp(3.2rem, 7vw, 6rem);
+      line-height: 0.95;
+      letter-spacing: -0.065em;
+    }
+
+    .subtitle {
+      max-width: 780px;
+      color: var(--muted);
+      font-size: clamp(1.04rem, 1.45vw, 1.18rem);
+      margin: 0;
+    }
+
+    .contact-card {
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      padding: 26px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.025));
+      box-shadow: 0 30px 90px rgba(0,0,0,0.26);
+    }
+
+    .contact-card h2 {
+      font-size: 1.25rem;
+      margin-bottom: 16px;
+    }
+
+    .contact-list {
+      display: grid;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 0.75fr 1.25fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 96px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: var(--panel);
+      padding: 24px;
+    }
+
+    .panel:hover {
+      background: var(--panel-strong);
+    }
+
+    h2 {
+      margin: 0 0 18px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.65rem, 3vw, 2.35rem);
+      font-weight: 500;
+      letter-spacing: -0.035em;
+      line-height: 1.08;
+    }
+
+    h3 {
+      margin: 0 0 7px;
+      font-size: 1.05rem;
+      letter-spacing: -0.01em;
+    }
+
+    p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+
+    li + li {
+      margin-top: 6px;
+    }
+
+    .section {
+      margin-bottom: 22px;
+    }
+
+    .item {
+      padding: 20px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .item:first-of-type {
+      border-top: none;
+      padding-top: 0;
+    }
+
+    .item:last-child {
+      padding-bottom: 0;
+    }
+
+    .item-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+
+    .date,
+    .place,
+    .meta {
+      color: var(--gold);
+      font-size: 0.88rem;
+      white-space: nowrap;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .small {
+      color: var(--muted-2);
+      font-size: 0.92rem;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 12px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      background: rgba(255,255,255,0.025);
+    }
+
+    .profile-text {
+      color: var(--muted);
+      font-size: 1.03rem;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 34px 0 48px;
+      color: var(--muted-2);
+      font-size: 0.92rem;
+    }
+
+    .footer-grid {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 930px) {
+      nav {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 18px 0;
+      }
+
+      .cv-hero,
+      .layout,
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+      }
+
+      main {
+        padding-top: 64px;
+      }
+
+      .item-head {
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .date,
+      .place,
+      .meta {
+        white-space: normal;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <nav>
+        <a class="brand" href="index.html">Constantinos Gkogkotsis</a>
+
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="index.html#direction">Direction</a>
+          <a href="index.html#projects">Projects</a>
+          <a href="index.html#notes">Notes</a>
+          <a class="active" href="cv.html">CV</a>
+          <a href="index.html#contact">Contact</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <section class="cv-hero">
+        <div>
+          <div class="eyebrow">Curriculum Vitae</div>
+          <h1>Constantinos Gkogkotsis</h1>
+          <p class="subtitle">
+            Undergraduate student in mathematics at the National and Kapodistrian
+            University of Athens, interested in pure mathematics, especially algebra,
+            geometry, and mathematical logic, together with algorithmic and computational
+            approaches to abstract mathematical structures.
+          </p>
+        </div>
+
+        <aside class="contact-card">
+          <h2>Contact</h2>
+          <div class="contact-list">
+            <div>Email: <a href="mailto:constantingkogkotsis@gmail.com">constantingkogkotsis@gmail.com</a></div>
+            <div>Location: Athens, Greece</div>
+            <div class="small">Phone omitted from public page by default.</div>
+          </div>
+        </aside>
+      </section>
+
+      <div class="layout">
+        <aside class="sidebar">
+          <div class="panel">
+            <h2>Research Interests</h2>
+            <div class="tag-row">
+              <span class="tag">Algebra</span>
+              <span class="tag">Geometry</span>
+              <span class="tag">Logic</span>
+              <span class="tag">Computational Algebra</span>
+              <span class="tag">Computational Geometry</span>
+              <span class="tag">Category Theory</span>
+              <span class="tag">Algorithmic Methods</span>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2>Technical Skills</h2>
+            <ul>
+              <li>Python</li>
+              <li>MATLAB</li>
+              <li>LaTeX</li>
+            </ul>
+          </div>
+
+          <div class="panel">
+            <h2>Languages</h2>
+            <ul>
+              <li>Greek — native</li>
+              <li>English — proficient / C2 / Michigan Proficiency</li>
+            </ul>
+          </div>
+        </aside>
+
+        <div>
+          <section class="panel section">
+            <h2>Academic Profile</h2>
+            <p class="profile-text">
+              I am an undergraduate mathematics student at the National and Kapodistrian
+              University of Athens, currently developing a strong interest in pure
+              mathematics, especially algebra, geometry, and mathematical logic. I am
+              also interested in the role of algorithmic and computational ideas in
+              understanding abstract mathematical structures. While my background is
+              still at the undergraduate level, I am particularly motivated by areas such
+              as algebraic geometry, computational algebra, category theory, and logic,
+              and I am working to build the foundations needed to approach these subjects
+              more seriously.
+            </p>
+          </section>
+
+          <section class="panel section">
+            <h2>Education</h2>
+
+            <div class="item">
+              <div class="item-head">
+                <div>
+                  <h3>National and Kapodistrian University of Athens</h3>
+                  <p>B.Sc. in Mathematics</p>
+                </div>
+                <div class="date">Expected graduation: 2026</div>
+              </div>
+              <p class="place">Athens, Greece</p>
+              <ul>
+                <li>Current grade: 7.33/10.</li>
+                <li>Expected final grade range: 8.0–8.98/10.</li>
+              </ul>
+            </div>
+
+            <div class="item">
+              <div class="item-head">
+                <div>
+                  <h3>General Lyceum of Avlonari</h3>
+                  <p>High School Diploma</p>
+                </div>
+                <div class="date">Graduated: 2020</div>
+              </div>
+              <p class="place">Avlonari, Greece</p>
+              <ul>
+                <li>Final grade: 19.3/20.</li>
+              </ul>
+            </div>
+          </section>
+
+          <section class="panel section">
+            <h2>Academic Projects</h2>
+
+            <div class="item">
+              <div class="item-head">
+                <div>
+                  <h3>Paper Presentation in Computational Algebra: The DMM Bound</h3>
+                  <p class="meta">Computational algebra</p>
+                </div>
+                <div class="date">2026</div>
+              </div>
+              <ul>
+                <li>Studied and presented a research paper in computational algebra.</li>
+                <li>Developed a Beamer presentation explaining the main theoretical and algorithmic ideas.</li>
+                <li>Focused on translating dense research-level material into clear, formal, and accessible mathematical exposition.</li>
+              </ul>
+            </div>
+
+            <div class="item">
+              <div class="item-head">
+                <div>
+                  <h3>Shortest Path Through the Vertices of a Convex Polygon</h3>
+                  <p class="meta">Algorithms and dynamic programming</p>
+                </div>
+                <div class="date">2026</div>
+              </div>
+              <ul>
+                <li>Studied a geometric optimization problem concerning shortest paths through all vertices of a convex polygon.</li>
+                <li>Developed a dynamic programming approach based on splitting the vertices into ordered chains and interleaving them optimally.</li>
+                <li>Presented the resulting algorithm with rigorous mathematical justification, pseudocode, and running-time analysis.</li>
+              </ul>
+            </div>
+
+            <div class="item">
+              <div class="item-head">
+                <div>
+                  <h3>“+ × +”: a λ-Calculus Presentation</h3>
+                  <p class="meta">Recursive functions and computability</p>
+                </div>
+                <div class="date">2025</div>
+              </div>
+              <p class="small">Uploaded on the DELOS platform.</p>
+              <ul>
+                <li>Delivered a presentation on λ-calculus as a formal model of computation.</li>
+                <li>Discussed abstraction, application, reduction, and the expressive power of formal computational systems.</li>
+                <li>Explored the limits of computation through the role of λ-calculus in computability theory.</li>
+              </ul>
+            </div>
+
+            <div class="item">
+              <div class="item-head">
+                <div>
+                  <h3>Academic Project in Topology</h3>
+                  <p class="meta">Alexandroff–Hausdorff Theorem and Applications</p>
+                </div>
+                <div class="date">2025</div>
+              </div>
+              <ul>
+                <li>Presented the Alexandroff–Hausdorff theorem in a topology course, based on Yoav Benyamini’s paper <em>Applications of the Universal Surjectivity of the Cantor Set</em>.</li>
+                <li>Explained the theorem through the role of the Cantor set as a universal source for compact metric spaces.</li>
+                <li>Discussed selected applications and examples connecting the theorem with broader ideas in topology.</li>
+              </ul>
+            </div>
+          </section>
+
+          <section class="panel section">
+            <h2>Teaching and Tutoring Experience</h2>
+
+            <div class="item">
+              <div class="item-head">
+                <div>
+                  <h3>Private Mathematics Tutor</h3>
+                  <p class="meta">Athens, Greece</p>
+                </div>
+                <div class="date">2021–Present</div>
+              </div>
+              <ul>
+                <li>Tutor students in mathematics, focusing on conceptual understanding, problem-solving techniques, and exam preparation.</li>
+                <li>Prepare personalized explanations and exercises adapted to each student’s level.</li>
+                <li>Developed stronger communication skills through one-on-one mathematical instruction.</li>
+              </ul>
+            </div>
+
+            <div class="item">
+              <div class="item-head">
+                <div>
+                  <h3>Volunteer Mathematics Tutor</h3>
+                  <p class="meta">Koinoniko Frontistirio Agiou Dimitriou, Athens, Greece</p>
+                </div>
+                <div class="date">2021–2022</div>
+              </div>
+              <ul>
+                <li>Volunteered as a mathematics tutor for 11th grade high-school students during the academic year 2021–2022.</li>
+                <li>Taught Algebra, focusing on conceptual understanding, problem-solving methods, and preparation for school examinations.</li>
+                <li>Supported students through clear explanations, guided practice, and additional exercises adapted to their needs.</li>
+              </ul>
+            </div>
+          </section>
+
+          <section class="panel section">
+            <h2>Additional Professional Experience</h2>
+
+            <div class="item">
+              <div class="item-head">
+                <div>
+                  <h3>Real Estate Agent</h3>
+                  <p class="meta">IBPG Kifisia, Athens, Greece</p>
+                </div>
+                <div class="date">2023–2024</div>
+              </div>
+              <ul>
+                <li>Worked as a real estate agent, assisting with property listings, client communication, and property viewings.</li>
+                <li>Supported clients in the process of buying, selling, or renting properties.</li>
+                <li>Developed communication, negotiation, and organizational skills through direct work with clients and real estate professionals.</li>
+              </ul>
+            </div>
+          </section>
+
+          <section class="panel section">
+            <h2>References</h2>
+            <p>Available upon request.</p>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container footer-grid">
+      <div>© 2026 Constantinos Gkogkotsis</div>
+      <div>Curriculum Vitae</div>
+    </div>
+  </footer>
+</body>
+</html>
