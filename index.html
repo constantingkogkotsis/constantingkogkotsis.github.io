@@ -344,6 +344,57 @@
       line-height: 1.45;
     }
 
+    .update-subsection {
+      margin-top: 42px;
+    }
+
+    .update-subsection:first-of-type {
+      margin-top: 0;
+    }
+
+    .subsection-title {
+      margin: 0 0 18px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.55rem;
+      font-weight: 500;
+      letter-spacing: -0.025em;
+      color: var(--text);
+    }
+
+    .update-card {
+      overflow: hidden;
+      padding: 0;
+    }
+
+    .update-visual {
+      height: 190px;
+      display: grid;
+      place-items: center;
+      border-bottom: 1px solid var(--line);
+      background:
+        radial-gradient(circle at center, rgba(183, 201, 255, 0.16), transparent 58%),
+        rgba(255, 255, 255, 0.025);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 3.6rem;
+      color: var(--accent);
+    }
+
+    .update-body {
+      padding: 24px;
+    }
+
+    .update-meta {
+      color: var(--gold);
+      font-size: 0.86rem;
+      margin-bottom: 10px;
+    }
+
+    .update-link {
+      display: inline-flex;
+      margin-top: 16px;
+      font-weight: 600;
+    }
+
     footer {
       padding: 34px 0 48px;
       color: var(--muted-2);
@@ -601,36 +652,170 @@
         <div class="section-head">
           <h2>Events and mathematical watchlist</h2>
           <p class="section-intro">
-            A small record of events I plan to attend or watch, together with
-            papers, talks, tools, and developments from mathematical directions
-            I want to keep following.
+            A curated record of mathematical events I plan to attend, watch, or
+            participate in, together with papers, talks, tools, and developments
+            from directions I want to keep following.
           </p>
         </div>
 
-        <div class="grid">
-          <article class="card">
-            <div class="project-title">
-              <h3>Events I plan to attend or watch</h3>
-              <span class="status">Events</span>
-            </div>
-            <p>
-              Seminars, lectures, conferences, interviews, lecture series, and
-              other mathematical events that I intend to attend, watch, or study
-              from afterwards.
-            </p>
-          </article>
+        <div class="update-subsection">
+          <h3 class="subsection-title">Events I plan to attend or watch</h3>
 
-          <article class="card wide">
-            <div class="project-title">
-              <h3>Mathematical watchlist</h3>
-              <span class="status">Papers / talks / tools</span>
-            </div>
-            <p>
-              A curated place for recent papers, talks, software, books, lecture
-              notes, and mathematical developments connected to the areas I am
-              interested in and may want to understand more seriously later.
-            </p>
-          </article>
+          <div class="grid">
+            <article class="card update-card">
+              <div class="update-visual">∫∂</div>
+
+              <div class="update-body">
+                <div class="project-title">
+                  <h3>Event title placeholder</h3>
+                  <span class="status">Event</span>
+                </div>
+
+                <p class="update-meta">
+                  Date · Institution · Location / Online
+                </p>
+
+                <p>
+                  Short description of the event. Here I will write what the event is,
+                  why it is mathematically relevant, and whether I plan to attend,
+                  watch, or study material from it afterwards.
+                </p>
+
+                <a class="update-link" href="#" target="_blank" rel="noopener noreferrer">
+                  View event →
+                </a>
+              </div>
+            </article>
+
+            <article class="card update-card">
+              <div class="update-visual">∫∂</div>
+
+              <div class="update-body">
+                <div class="project-title">
+                  <h3>Seminar / lecture placeholder</h3>
+                  <span class="status">To follow</span>
+                </div>
+
+                <p class="update-meta">
+                  Date · Speaker · Department / Platform
+                </p>
+
+                <p>
+                  Short note about a seminar, lecture, workshop, or lecture series
+                  that connects to my current mathematical direction or future work.
+                </p>
+
+                <a class="update-link" href="#" target="_blank" rel="noopener noreferrer">
+                  View event →
+                </a>
+              </div>
+            </article>
+
+            <article class="card update-card">
+              <div class="update-visual">∫∂</div>
+
+              <div class="update-body">
+                <div class="project-title">
+                  <h3>Conference / school placeholder</h3>
+                  <span class="status">Watching</span>
+                </div>
+
+                <p class="update-meta">
+                  Date · Topic · Location / Online
+                </p>
+
+                <p>
+                  Placeholder for a conference, summer school, workshop, or recorded
+                  event whose material I may want to follow or use as a reading path.
+                </p>
+
+                <a class="update-link" href="#" target="_blank" rel="noopener noreferrer">
+                  View event →
+                </a>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div class="update-subsection">
+          <h3 class="subsection-title">Papers, talks, and tools I am following</h3>
+
+          <div class="grid">
+            <article class="card update-card">
+              <div class="update-visual">∫∂</div>
+
+              <div class="update-body">
+                <div class="project-title">
+                  <h3>Paper placeholder</h3>
+                  <span class="status">Paper</span>
+                </div>
+
+                <p class="update-meta">
+                  Area · Authors · Year
+                </p>
+
+                <p>
+                  Short note about the paper: what area it belongs to, why I am
+                  tracking it, and what part of it may become relevant for future
+                  notes, projects, or study.
+                </p>
+
+                <a class="update-link" href="#" target="_blank" rel="noopener noreferrer">
+                  View paper →
+                </a>
+              </div>
+            </article>
+
+            <article class="card update-card">
+              <div class="update-visual">∫∂</div>
+
+              <div class="update-body">
+                <div class="project-title">
+                  <h3>Talk placeholder</h3>
+                  <span class="status">Talk</span>
+                </div>
+
+                <p class="update-meta">
+                  Area · Speaker · Source
+                </p>
+
+                <p>
+                  Placeholder for a recorded talk or seminar. Here I will record the
+                  theme, speaker, source, and the reason it connects to something I am
+                  currently trying to understand.
+                </p>
+
+                <a class="update-link" href="#" target="_blank" rel="noopener noreferrer">
+                  View talk →
+                </a>
+              </div>
+            </article>
+
+            <article class="card update-card">
+              <div class="update-visual">∫∂</div>
+
+              <div class="update-body">
+                <div class="project-title">
+                  <h3>Tool / software placeholder</h3>
+                  <span class="status">Tool</span>
+                </div>
+
+                <p class="update-meta">
+                  Area · Software / Library · Status
+                </p>
+
+                <p>
+                  Placeholder for mathematical software, packages, libraries, or tools
+                  that may be useful for computational algebra, algorithms, experiments,
+                  or explicit examples.
+                </p>
+
+                <a class="update-link" href="#" target="_blank" rel="noopener noreferrer">
+                  View source →
+                </a>
+              </div>
+            </article>
+          </div>
         </div>
 
         <p class="quote-block" style="margin-top: 42px;">
