@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>The DMM Bound | Constantinos Gkogkotsis</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+  <style>
+    :root {
+      --bg: #080a0f;
+      --bg-soft: #10131b;
+      --panel: rgba(255, 255, 255, 0.045);
+      --panel-strong: rgba(255, 255, 255, 0.075);
+      --text: #f2f2f0;
+      --muted: #aeb4c1;
+      --muted-2: #7f8796;
+      --line: rgba(255, 255, 255, 0.12);
+      --accent: #b7c9ff;
+      --accent-strong: #e5d6ff;
+      --gold: #d7c58f;
+      --green: #7ed6a5;
+      --red: #ff8d8d;
+      --blue: #70c8ff;
+      --max: 1120px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 18% 8%, rgba(119, 144, 255, 0.16), transparent 31%),
+        radial-gradient(circle at 86% 12%, rgba(215, 197, 143, 0.10), transparent 28%),
+        linear-gradient(180deg, #080a0f 0%, #0b0e14 45%, #080a0f 100%);
+      color: var(--text);
+      line-height: 1.65;
+
+      opacity: 0;
+      transform: translateY(10px);
+      filter: blur(4px);
+      transition:
+        opacity 420ms ease,
+        transform 420ms ease,
+        filter 420ms ease;
+    }
+
+    body.page-ready {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+
+    body.page-leaving {
+      opacity: 0;
+      transform: translateY(-10px);
+      filter: blur(4px);
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      width: min(var(--max), 92vw);
+      margin: 0 auto;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(18px);
+      background: rgba(8, 10, 15, 0.78);
+      border-bottom: 1px solid var(--line);
+    }
+
+    nav {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.05rem;
+      letter-spacing: 0.02em;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .brand-symbol {
+      display: inline-grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--accent);
+      background: rgba(255, 255, 255, 0.035);
+      font-size: 0.95rem;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      flex-wrap: wrap;
+      font-size: 0.94rem;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .hero {
+      padding: 110px 0 76px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.18fr 0.82fr;
+      gap: 56px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--gold);
+      font-size: 0.82rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 34px;
+      height: 1px;
+      background: var(--gold);
+      opacity: 0.8;
+    }
+
+    h1 {
+      margin: 0 0 26px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 500;
+      font-size: clamp(3rem, 7vw, 6.2rem);
+      line-height: 0.95;
+      letter-spacing: -0.07em;
+    }
+
+    h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2rem, 3.8vw, 3.2rem);
+      font-weight: 500;
+      letter-spacing: -0.045em;
+      line-height: 1.05;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 1.08rem;
+      letter-spacing: -0.015em;
+    }
+
+    h4 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      color: var(--text);
+    }
+
+    .hero-text,
+    .section-intro,
+    p,
+    li {
+      color: var(--muted);
+    }
+
+    .hero-text {
+      max-width: 760px;
+      font-size: clamp(1.08rem, 1.6vw, 1.24rem);
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 34px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 18px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.035);
+      color: var(--text);
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: 0.18s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      text-decoration: none;
+      border-color: rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: #070910;
+      border-color: transparent;
+    }
+
+    section {
+      padding: 76px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: 0.7fr 1.3fr;
+      gap: 40px;
+      align-items: start;
+      margin-bottom: 34px;
+    }
+
+    .section-intro {
+      font-size: 1.05rem;
+      margin: 0;
+      max-width: 790px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .two-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .card {
+      min-height: 100%;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 24px;
+      background: var(--panel);
+    }
+
+    .card:hover {
+      background: var(--panel-strong);
+    }
+
+    .wide {
+      grid-column: span 2;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .project-title {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+
+    .status {
+      color: var(--muted-2);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      white-space: nowrap;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 18px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      background: rgba(255,255,255,0.025);
+    }
+
+    .math-panel {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      overflow-x: auto;
+    }
+
+    .formula {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.08rem;
+      color: var(--text);
+      margin: 0;
+    }
+
+    .note {
+      border-left: 2px solid var(--gold);
+      padding-left: 18px;
+      color: var(--muted);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.18rem;
+      line-height: 1.5;
+    }
+
+    .svg-card {
+      display: grid;
+      place-items: center;
+      min-height: 310px;
+      padding: 18px;
+      overflow: hidden;
+    }
+
+    .svg-card > svg {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .MathJax {
+      display: inline !important;
+    }
+
+    .MathJax svg {
+      display: inline !important;
+    }
+
+    .svg-label {
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      font-size: 13px;
+      fill: var(--text);
+    }
+
+    .svg-small {
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      font-size: 11px;
+      fill: var(--muted);
+    }
+
+    .svg-math {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 15px;
+      fill: var(--text);
+    }
+
+    .axis {
+      stroke: rgba(255,255,255,0.35);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .dash {
+      stroke: var(--muted);
+      stroke-dasharray: 7 6;
+      stroke-width: 2;
+    }
+
+    .point {
+      fill: var(--gold);
+      stroke: var(--bg);
+      stroke-width: 2;
+    }
+
+    .point-blue {
+      fill: var(--accent);
+      stroke: var(--bg);
+      stroke-width: 2;
+    }
+
+    .point-green {
+      fill: var(--green);
+      stroke: var(--bg);
+      stroke-width: 2;
+    }
+
+    .blue-line {
+      stroke: var(--blue);
+      stroke-width: 3;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .gold-line {
+      stroke: var(--gold);
+      stroke-width: 3;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .green-line {
+      stroke: var(--green);
+      stroke-width: 3;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .red-line {
+      stroke: var(--red);
+      stroke-width: 3;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .flow-box {
+      fill: rgba(255,255,255,0.045);
+      stroke: rgba(255,255,255,0.18);
+      stroke-width: 2;
+    }
+
+    .flow-box-blue {
+      fill: rgba(112,200,255,0.12);
+      stroke: var(--blue);
+      stroke-width: 2;
+    }
+
+    .flow-box-green {
+      fill: rgba(126,214,165,0.11);
+      stroke: var(--green);
+      stroke-width: 2;
+    }
+
+    .flow-box-gold {
+      fill: rgba(215,197,143,0.10);
+      stroke: var(--gold);
+      stroke-width: 2;
+    }
+
+    .arrow {
+      stroke: var(--accent);
+      stroke-width: 3;
+      fill: none;
+      marker-end: url(#arrowhead);
+    }
+
+    .quote-block {
+      border-left: 2px solid var(--gold);
+      padding-left: 22px;
+      color: var(--muted);
+      max-width: 850px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.35rem;
+      line-height: 1.45;
+    }
+
+    footer {
+      padding: 34px 0 48px;
+      color: var(--muted-2);
+      font-size: 0.92rem;
+    }
+
+    .footer-grid {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 900px) {
+      nav {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 18px 0;
+      }
+
+      .hero-grid,
+      .section-head,
+      .two-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .wide {
+        grid-column: span 1;
+      }
+
+      .hero {
+        padding-top: 82px;
+      }
+    }
+  </style>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <nav>
+        <a class="brand" href="index.html#top">
+          <span class="brand-symbol">∫∂</span>
+          <span>Constantinos Gkogkotsis</span>
+        </a>
+
+        <div class="nav-links">
+          <a href="index.html#top">Home</a>
+          <a href="index.html#direction">Direction</a>
+          <a href="index.html#projects">Projects</a>
+          <a href="index.html#notes">Notes</a>
+          <a href="index.html#updates">Updates</a>
+          <a href="cv.html">CV</a>
+          <a href="index.html#contact">Contact</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow">Computational algebra · Separation bounds · Mixed volume</div>
+
+          <h1>The DMM Bound.</h1>
+
+          <p class="hero-text">
+            An integrated project page based on a Computational Algebra presentation
+            on the Davenport–Mahler–Mignotte philosophy: from separation bounds for
+            one polynomial to separation information for sparse polynomial systems.
+          </p>
+
+          <p class="hero-text">
+            The guiding idea is simple: reduce a multivariate system to a univariate
+            object by projection and elimination, apply the known one-variable bound,
+            and then transfer the information back to distances between solutions.
+          </p>
+
+          <div class="hero-actions">
+            <a class="btn primary" href="#reduction">View reduction</a>
+            <a class="btn" href="#dmmn">DMMn structure</a>
+            <a class="btn" href="index.html#projects">Back to projects</a>
+          </div>
+        </div>
+
+        <aside class="card svg-card">
+          <svg viewBox="0 0 520 340" role="img" aria-label="DMM bound project diagram">
+            <defs>
+              <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                <polygon points="0 0, 10 3.5, 0 7" fill="#b7c9ff"></polygon>
+              </marker>
+            </defs>
+
+            <rect class="flow-box-blue" x="50" y="70" width="135" height="70" rx="16"></rect>
+            <text class="svg-label" x="78" y="100">DMM₁</text>
+            <text class="svg-small" x="74" y="122">one polynomial</text>
+
+            <rect class="flow-box" x="215" y="70" width="120" height="70" rx="16"></rect>
+            <text class="svg-label" x="244" y="100">projection</text>
+            <text class="svg-small" x="242" y="122">linear form</text>
+
+            <rect class="flow-box-green" x="365" y="70" width="120" height="70" rx="16"></rect>
+            <text class="svg-label" x="397" y="100">DMMₙ</text>
+            <text class="svg-small" x="392" y="122">systems</text>
+
+            <path class="arrow" d="M185 105 L215 105"></path>
+            <path class="arrow" d="M335 105 L365 105"></path>
+
+            <rect class="flow-box-gold" x="92" y="205" width="145" height="70" rx="16"></rect>
+            <text class="svg-label" x="124" y="235">resultant</text>
+            <text class="svg-small" x="117" y="257">eliminate variables</text>
+
+            <rect class="flow-box-blue" x="283" y="205" width="145" height="70" rx="16"></rect>
+            <text class="svg-label" x="322" y="235">mixed volume</text>
+            <text class="svg-small" x="318" y="257">sparse geometry</text>
+
+            <path class="arrow" d="M165 140 C165 170, 165 185, 165 205"></path>
+            <path class="arrow" d="M356 205 C356 175, 356 160, 425 140"></path>
+
+            <text class="svg-small" x="128" y="310">univariate bound + elimination + sparse geometry</text>
+          </svg>
+        </aside>
+      </div>
+    </section>
+
+    <section id="overview">
+      <div class="container">
+        <div class="section-head">
+          <h2>Project overview</h2>
+          <p class="section-intro">
+            The presentation does not try to reproduce the full technical paper. Its
+            purpose is to expose the central mechanism: how the univariate DMM bound
+            becomes useful for multivariate polynomial systems.
+          </p>
+        </div>
+
+        <div class="grid">
+          <article class="card">
+            <div class="project-title">
+              <h3>Starting point</h3>
+              <span class="status">DMM₁</span>
+            </div>
+            <p>
+              Begin with one polynomial and with distances between its complex roots.
+              The aggregate product of selected distances is controlled from below.
+            </p>
+          </article>
+
+          <article class="card">
+            <div class="project-title">
+              <h3>Main bridge</h3>
+              <span class="status">Reduction</span>
+            </div>
+            <p>
+              Project the solutions of a system onto one parameter \(u\), then use a
+              \(u\)-resultant to obtain a univariate polynomial whose roots encode
+              the projected solutions.
+            </p>
+          </article>
+
+          <article class="card">
+            <div class="project-title">
+              <h3>Multivariate form</h3>
+              <span class="status">DMMₙ</span>
+            </div>
+            <p>
+              Transfer the one-variable bound back to the solution space, with losses
+              controlled by the separating linear form and the geometry of Newton
+              polytopes.
+            </p>
+          </article>
+        </div>
+
+        <div class="tag-row">
+          <span class="tag">Davenport–Mahler–Mignotte</span>
+          <span class="tag">Separation bounds</span>
+          <span class="tag">Sparse resultants</span>
+          <span class="tag">Newton polytopes</span>
+          <span class="tag">Mixed volume</span>
+          <span class="tag">Polynomial systems</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="motivation">
+      <div class="container">
+        <div class="section-head">
+          <h2>Why separation bounds?</h2>
+          <p class="section-intro">
+            In numerical or symbolic solving, approximating roots is not enough. We
+            need enough information to verify and isolate them. A separation bound
+            tells us how close two distinct roots can be.
+          </p>
+        </div>
+
+        <div class="two-grid">
+          <article class="card">
+            <div class="project-title">
+              <h3>The computational problem</h3>
+              <span class="status">Isolation</span>
+            </div>
+
+            <p>
+              Suppose we want to solve a polynomial system
+            </p>
+
+            <div class="math-panel" style="margin-top: 16px;">
+              <p class="formula">\[
+                f_1(x)=\cdots=f_n(x)=0.
+              \]</p>
+            </div>
+
+            <p style="margin-top: 16px;">
+              Even when numerical approximations are available, algorithms still need
+              to decide whether two approximations correspond to the same solution or
+              to two different solutions.
+            </p>
+          </article>
+
+          <article class="card svg-card">
+            <svg viewBox="0 0 520 310" role="img" aria-label="Approximation verification isolation workflow">
+              <defs>
+                <marker id="arrowhead2" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                  <polygon points="0 0, 10 3.5, 0 7" fill="#b7c9ff"></polygon>
+                </marker>
+              </defs>
+
+              <rect class="flow-box-blue" x="45" y="105" width="120" height="72" rx="16"></rect>
+              <text class="svg-label" x="74" y="132">approximate</text>
+              <text class="svg-label" x="88" y="154">roots</text>
+
+              <rect class="flow-box" x="200" y="105" width="120" height="72" rx="16"></rect>
+              <text class="svg-label" x="224" y="132">verify</text>
+              <text class="svg-label" x="232" y="154">root</text>
+
+              <rect class="flow-box-green" x="355" y="105" width="120" height="72" rx="16"></rect>
+              <text class="svg-label" x="379" y="132">isolate</text>
+              <text class="svg-label" x="379" y="154">in boxes</text>
+
+              <path class="arrow" marker-end="url(#arrowhead2)" d="M165 141 L200 141"></path>
+              <path class="arrow" marker-end="url(#arrowhead2)" d="M320 141 L355 141"></path>
+
+              <text class="svg-small" x="112" y="230">separation controls how much precision is enough</text>
+            </svg>
+          </article>
+
+          <article class="card svg-card">
+            <svg viewBox="0 0 520 300" role="img" aria-label="Aggregate bound on root distances">
+              <line class="axis" x1="60" y1="155" x2="460" y2="155"></line>
+
+              <circle class="point" cx="120" cy="155" r="6"></circle>
+              <circle class="point" cx="160" cy="155" r="6"></circle>
+              <circle class="point" cx="220" cy="155" r="6"></circle>
+              <circle class="point" cx="350" cy="155" r="6"></circle>
+              <circle class="point" cx="405" cy="155" r="6"></circle>
+
+              <path class="gold-line" d="M120 122 L160 122"></path>
+              <path class="gold-line" d="M160 105 L220 105"></path>
+              <path class="gold-line" d="M350 122 L405 122"></path>
+
+              <text class="svg-label" x="111" y="180">γ₁</text>
+              <text class="svg-label" x="151" y="180">γ₂</text>
+              <text class="svg-label" x="211" y="180">γ₃</text>
+              <text class="svg-label" x="341" y="180">γ₄</text>
+              <text class="svg-label" x="396" y="180">γ₅</text>
+
+              <text class="svg-small" x="120" y="92">selected distances</text>
+              <text class="svg-small" x="128" y="240">not every selected distance can be too small at once</text>
+            </svg>
+          </article>
+
+          <article class="card">
+            <div class="project-title">
+              <h3>Aggregate bounds</h3>
+              <span class="status">Product</span>
+            </div>
+
+            <p>
+              A usual separation bound controls the closest pair:
+            </p>
+
+            <div class="math-panel" style="margin-top: 16px;">
+              <p class="formula">\[
+                \operatorname{sep}(f)=\min_{i\ne j}|\gamma_i-\gamma_j|.
+              \]</p>
+            </div>
+
+            <p style="margin-top: 16px;">
+              The DMM philosophy is more global: it controls from below products of
+              selected distances.
+            </p>
+
+            <div class="math-panel" style="margin-top: 16px;">
+              <p class="formula">\[
+                \prod_{(i,j)\in\Omega}|\gamma_i-\gamma_j|.
+              \]</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="dmm1">
+      <div class="container">
+        <div class="section-head">
+          <h2>The one-variable model</h2>
+          <p class="section-intro">
+            The univariate case is the model. A polynomial has roots already living
+            on a one-dimensional object, so the DMM bound can speak directly about
+            products of distances between those roots.
+          </p>
+        </div>
+
+        <div class="two-grid">
+          <article class="card">
+            <div class="project-title">
+              <h3>A polynomial and its roots</h3>
+              <span class="status">DMM₁</span>
+            </div>
+
+            <p>
+              Let
+            </p>
+
+            <div class="math-panel" style="margin-top: 16px;">
+              <p class="formula">\[
+                f(X)=a_d\prod_{i=1}^{d}(X-\gamma_i)\in\mathbb{C}[X].
+              \]</p>
+            </div>
+
+            <p style="margin-top: 16px;">
+              The Davenport–Mahler–Mignotte theorem gives lower bounds for products
+              of distances between selected roots. In the integer-coefficient case,
+              the bound can be expressed through the degree and coefficient size of
+              \(f\), equivalently through quantities such as the Mahler measure.
+            </p>
+          </article>
+
+          <article class="card svg-card">
+            <svg viewBox="0 0 520 330" role="img" aria-label="Roots in the complex plane">
+              <line class="axis" x1="80" y1="245" x2="440" y2="245"></line>
+              <line class="axis" x1="260" y1="285" x2="260" y2="55"></line>
+
+              <text class="svg-label" x="445" y="250">Re</text>
+              <text class="svg-label" x="265" y="58">Im</text>
+
+              <circle class="point-blue" cx="180" cy="190" r="6"></circle>
+              <circle class="point-blue" cx="230" cy="130" r="6"></circle>
+              <circle class="point-blue" cx="305" cy="150" r="6"></circle>
+              <circle class="point-blue" cx="370" cy="220" r="6"></circle>
+              <circle class="point-blue" cx="220" cy="255" r="6"></circle>
+
+              <path class="gold-line" d="M180 190 L230 130 L305 150"></path>
+              <path class="gold-line" d="M370 220 L220 255"></path>
+
+              <text class="svg-label" x="160" y="190">γ₁</text>
+              <text class="svg-label" x="215" y="115">γ₂</text>
+              <text class="svg-label" x="312" y="147">γ₃</text>
+              <text class="svg-label" x="380" y="220">γ₄</text>
+              <text class="svg-label" x="200" y="278">γ₅</text>
+
+              <text class="svg-small" x="105" y="305">DMM₁ controls products of selected root distances.</text>
+            </svg>
+          </article>
+        </div>
+
+        <p class="note" style="margin-top: 34px;">
+          The key point is that DMM is not merely about the single closest pair of
+          roots. It gives a more collective estimate on how roots can cluster.
+        </p>
+      </div>
+    </section>
+
+    <section id="reduction">
+      <div class="container">
+        <div class="section-head">
+          <h2>From systems to one variable</h2>
+          <p class="section-intro">
+            For polynomial systems, roots do not live on a line. The proof therefore
+            constructs a one-variable object by projecting the solutions and eliminating
+            the original variables.
+          </p>
+        </div>
+
+        <div class="grid">
+          <article class="card wide">
+            <div class="project-title">
+              <h3>The basic sparse system</h3>
+              <span class="status">Laurent polynomials</span>
+            </div>
+
+            <p>
+              The central setting is a system of \(n\) Laurent polynomials in \(n\)
+              variables:
+            </p>
+
+            <div class="math-panel" style="margin-top: 16px;">
+              <p class="formula">\[
+                (\Sigma):\quad f_1(x)=\cdots=f_n(x)=0,
+                \qquad x=(x_1,\ldots,x_n)\in(\mathbb{C}^{*})^n.
+              \]</p>
+            </div>
+
+            <p style="margin-top: 16px;">
+              Each polynomial has finite support:
+            </p>
+
+            <div class="math-panel" style="margin-top: 16px;">
+              <p class="formula">\[
+                f_i=\sum_j c_{i,j}x^{a_{i,j}}.
+              \]</p>
+            </div>
+          </article>
+
+          <article class="card svg-card">
+            <svg viewBox="0 0 430 310" role="img" aria-label="Newton polytope from support points">
+              <line class="axis" x1="70" y1="250" x2="350" y2="250"></line>
+              <line class="axis" x1="70" y1="250" x2="70" y2="55"></line>
+
+              <polygon points="105,220 155,105 270,95 330,190 250,240" fill="rgba(215,197,143,0.13)" stroke="#d7c58f" stroke-width="3"></polygon>
+
+              <circle class="point-blue" cx="105" cy="220" r="5"></circle>
+              <circle class="point-blue" cx="155" cy="105" r="5"></circle>
+              <circle class="point-blue" cx="270" cy="95" r="5"></circle>
+              <circle class="point-blue" cx="330" cy="190" r="5"></circle>
+              <circle class="point-blue" cx="250" cy="240" r="5"></circle>
+              <circle class="point-blue" cx="215" cy="170" r="5"></circle>
+
+              <text class="svg-label" x="355" y="254">exponent 1</text>
+              <text class="svg-label" x="35" y="60">exponent 2</text>
+              <text class="svg-small" x="135" y="285">support points → Newton polytope</text>
+            </svg>
+          </article>
+
+          <article class="card">
+            <div class="project-title">
+              <h3>Bernstein bound</h3>
+              <span class="status">Mixed volume</span>
+            </div>
+
+            <p>
+              If \(Q_i\) is the Newton polytope of \(f_i\), the mixed volume
+            </p>
+
+            <div class="math-panel" style="margin-top: 16px;">
+              <p class="formula">\[
+                M_0=\operatorname{MV}(Q_1,\ldots,Q_n)
+              \]</p>
+            </div>
+
+            <p style="margin-top: 16px;">
+              bounds the number \(D\) of isolated toric solutions:
+            </p>
+
+            <div class="math-panel" style="margin-top: 16px;">
+              <p class="formula">\[
+                D\le M_0.
+              \]</p>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="project-title">
+              <h3>Why not only Bézout?</h3>
+              <span class="status">Sparse geometry</span>
+            </div>
+
+            <p>
+              Bézout uses only degrees and gives a bound of the form \(d^n\). The
+              Bernstein bound uses which monomials actually occur. For sparse systems,
+              the mixed-volume bound may be substantially sharper.
+            </p>
+          </article>
+
+          <article class="card svg-card">
+            <svg viewBox="0 0 430 310" role="img" aria-label="Bezout versus Bernstein">
+              <rect class="flow-box" x="55" y="85" width="135" height="120" rx="16"></rect>
+              <text class="svg-label" x="82" y="122">Bézout</text>
+              <text class="svg-small" x="82" y="148">only degrees</text>
+              <line class="axis" x1="85" y1="180" x2="160" y2="180"></line>
+              <line class="axis" x1="85" y1="180" x2="85" y2="125"></line>
+              <circle class="point" cx="105" cy="165" r="3"></circle>
+              <circle class="point" cx="125" cy="150" r="3"></circle>
+              <circle class="point" cx="145" cy="135" r="3"></circle>
+
+              <rect class="flow-box-green" x="240" y="85" width="135" height="120" rx="16"></rect>
+              <text class="svg-label" x="270" y="122">Bernstein</text>
+              <text class="svg-small" x="262" y="148">Newton polytopes</text>
+              <polygon points="272,180 292,135 345,155 330,190" fill="rgba(126,214,165,0.13)" stroke="#7ed6a5" stroke-width="3"></polygon>
+              <circle class="point-green" cx="272" cy="180" r="4"></circle>
+              <circle class="point-green" cx="292" cy="135" r="4"></circle>
+              <circle class="point-green" cx="345" cy="155" r="4"></circle>
+              <circle class="point-green" cx="330" cy="190" r="4"></circle>
+
+              <path class="arrow" d="M195 145 L235 145"></path>
+              <text class="svg-small" x="90" y="250">replace degree-only counting by sparse geometry</text>
+            </svg>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="projection">
+      <div class="container">
+        <div class="section-head">
+          <h2>Projection and the \(u\)-resultant</h2>
+          <p class="section-intro">
+            The reduction chooses a linear form that separates the solutions. Then
+            the system is eliminated into a single polynomial in the new parameter
+            \(u\).
+          </p>
+        </div>
+
+        <div class="two-grid">
+          <article class="card">
+            <div class="project-title">
+              <h3>Projecting the solutions</h3>
+              <span class="status">Linear form</span>
+            </div>
+
+            <p>
+              Introduce a linear equation with a new parameter:
+            </p>
+
+            <div class="math-panel" style="margin-top: 16px;">
+              <p class="formula">\[
+                f_0=u+r_1x_1+\cdots+r_nx_n.
+              \]</p>
+            </div>
+
+            <p style="margin-top: 16px;">
+              On a solution \(\gamma_j\), this gives
+            </p>
+
+            <div class="math-panel" style="margin-top: 16px;">
+              <p class="formula">\[
+                u_j=-(r_1\gamma_{j,1}+\cdots+r_n\gamma_{j,n}).
+              \]</p>
+            </div>
+          </article>
+
+          <article class="card svg-card">
+            <svg viewBox="0 0 520 330" role="img" aria-label="Projection of solutions onto u-line">
+              <line class="axis" x1="80" y1="255" x2="260" y2="255"></line>
+              <line class="axis" x1="80" y1="255" x2="80" y2="80"></line>
+              <text class="svg-label" x="265" y="260">x₁</text>
+              <text class="svg-label" x="55" y="84">x₂</text>
+
+              <circle class="point-blue" cx="115" cy="220" r="6"></circle>
+              <circle class="point-blue" cx="145" cy="155" r="6"></circle>
+              <circle class="point-blue" cx="190" cy="195" r="6"></circle>
+              <circle class="point-blue" cx="225" cy="120" r="6"></circle>
+
+              <text class="svg-label" x="97" y="220">γ₁</text>
+              <text class="svg-label" x="150" y="150">γ₂</text>
+              <text class="svg-label" x="195" y="195">γ₃</text>
+              <text class="svg-label" x="232" y="120">γ₄</text>
+
+              <path class="arrow" d="M280 175 L340 175"></path>
+
+              <line class="axis" x1="360" y1="175" x2="485" y2="175"></line>
+              <text class="svg-label" x="490" y="180">u</text>
+
+              <circle class="point-green" cx="375" cy="175" r="5"></circle>
+              <circle class="point-green" cx="405" cy="175" r="5"></circle>
+              <circle class="point-green" cx="440" cy="175" r="5"></circle>
+              <circle class="point-green" cx="470" cy="175" r="5"></circle>
+
+              <text class="svg-small" x="367" y="202">u₁</text>
+              <text class="svg-small" x="397" y="202">u₃</text>
+              <text class="svg-small" x="432" y="202">u₂</text>
+              <text class="svg-small" x="462" y="202">u₄</text>
+            </svg>
+          </article>
+
+          <article class="card svg-card">
+            <svg viewBox="0 0 520 330" role="img" aria-label="Good and bad separating projections">
+              <rect class="flow-box-blue" x="70" y="55" width="150" height="70" rx="16"></rect>
+              <text class="svg-label" x="104" y="85">finite set</text>
+              <text class="svg-small" x="103" y="107">solutions V</text>
+
+              <rect class="flow-box" x="295" y="45" width="150" height="70" rx="16"></rect>
+              <text class="svg-label" x="326" y="75">bad projection</text>
+              <text class="svg-small" x="321" y="98">images collide</text>
+
+              <rect class="flow-box-green" x="295" y="180" width="150" height="70" rx="16"></rect>
+              <text class="svg-label" x="326" y="210">good projection</text>
+              <text class="svg-small" x="323" y="233">images distinct</text>
+
+              <path class="arrow" d="M220 90 C250 75, 265 75, 295 80"></path>
+              <path class="arrow" d="M220 90 C250 145, 265 190, 295 215"></path>
+
+              <text class="svg-small" x="85" y="290">choose a linear form that separates different solutions</text>
+            </svg>
+          </article>
+
+          <article class="card">
+            <div class="project-title">
+              <h3>Separating element</h3>
+              <span class="status">Distinct images</span>
+            </div>
+
+            <p>
+              We want a linear form that does not identify two distinct solutions:
+            </p>
+
+            <div class="math-panel" style="margin-top: 16px;">
+              <p class="formula">\[
+                \gamma_i\ne\gamma_j\quad\Longrightarrow\quad u_i\ne u_j.
+              \]</p>
+            </div>
+
+            <p style="margin-top: 16px;">
+              The presentation uses a finite family of linear forms
+            </p>
+
+            <div class="math-panel" style="margin-top: 16px;">
+              <p class="formula">\[
+                \ell_i(x)=x_1+ix_2+\cdots+i^{\,n-1}x_n.
+              \]</p>
+            </div>
+
+            <p style="margin-top: 16px;">
+              At least one of them separates the \(D\) solutions.
+            </p>
+          </article>
+
+          <article class="card wide">
+            <div class="project-title">
+              <h3>The \(u\)-resultant</h3>
+              <span class="status">Elimination</span>
+            </div>
+
+            <p>
+              Once \(f_0\) is chosen, eliminate \(x_1,\ldots,x_n\):
+            </p>
+
+            <div class="math-panel" style="margin-top: 16px;">
+              <p class="formula">\[
+                f_0=f_1=\cdots=f_n=0
+                \quad\rightsquigarrow\quad
+                U(u)=0.
+              \]</p>
+            </div>
+
+            <p style="margin-top: 16px;">
+              The roots of \(U\) are precisely the projected values \(u_j\) associated
+              to the solutions of the original system, assuming the projection is
+              separating.
+            </p>
+          </article>
+
+          <article class="card svg-card">
+            <svg viewBox="0 0 520 330" role="img" aria-label="u-resultant elimination flow">
+              <rect class="flow-box-blue" x="35" y="120" width="135" height="75" rx="16"></rect>
+              <text class="svg-label" x="62" y="150">n+1 equations</text>
+              <text class="svg-small" x="65" y="173">in x and u</text>
+
+              <rect class="flow-box-gold" x="200" y="120" width="135" height="75" rx="16"></rect>
+              <text class="svg-label" x="235" y="150">sparse</text>
+              <text class="svg-label" x="226" y="172">resultant</text>
+
+              <rect class="flow-box-green" x="365" y="120" width="120" height="75" rx="16"></rect>
+              <text class="svg-label" x="389" y="150">one</text>
+              <text class="svg-label" x="384" y="172">U(u)</text>
+
+              <path class="arrow" d="M170 158 L200 158"></path>
+              <path class="arrow" d="M335 158 L365 158"></path>
+
+              <text class="svg-small" x="110" y="255">the system becomes one univariate polynomial</text>
+            </svg>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="dmmn">
+      <div class="container">
+        <div class="section-head">
+          <h2>The multivariate bound</h2>
+          <p class="section-intro">
+            The proof of the multivariate statement is not a completely new theorem
+            from zero. It is the one-variable theorem after projection and elimination,
+            followed by a comparison of distances.
+          </p>
+        </div>
+
+        <div class="grid">
+          <article class="card full">
+            <div class="project-title">
+              <h3>Proof structure</h3>
+              <span class="status">One line</span>
+            </div>
+
+            <div class="svg-card">
+              <svg viewBox="0 0 780 260" role="img" aria-label="Proof structure of DMMn">
+                <rect class="flow-box-blue" x="35" y="80" width="130" height="70" rx="16"></rect>
+                <text class="svg-label" x="66" y="108">solutions</text>
+                <text class="svg-small" x="66" y="130">γᵢ ∈ (C*)ⁿ</text>
+
+                <rect class="flow-box" x="200" y="80" width="145" height="70" rx="16"></rect>
+                <text class="svg-label" x="230" y="108">separating</text>
+                <text class="svg-small" x="230" y="130">linear form</text>
+
+                <rect class="flow-box-gold" x="380" y="80" width="145" height="70" rx="16"></rect>
+                <text class="svg-label" x="414" y="108">univariate</text>
+                <text class="svg-small" x="420" y="130">U(u)</text>
+
+                <rect class="flow-box-green" x="560" y="80" width="145" height="70" rx="16"></rect>
+                <text class="svg-label" x="592" y="108">apply</text>
+                <text class="svg-small" x="598" y="130">DMM₁</text>
+
+                <rect class="flow-box-blue" x="300" y="185" width="170" height="55" rx="14"></rect>
+                <text class="svg-label" x="334" y="208">transfer back</text>
+                <text class="svg-small" x="335" y="228">to distances γᵢ−γⱼ</text>
+
+                <path class="arrow" d="M165 115 L200 115"></path>
+                <path class="arrow" d="M345 115 L380 115"></path>
+                <path class="arrow" d="M525 115 L560 115"></path>
+                <path class="arrow" d="M632 150 C632 205, 520 212, 470 212"></path>
+              </svg>
+            </div>
+
+            <p class="note">
+              Reduce the system to \(U(u)\), apply the known univariate bound, then
+              compare \(|u_i-u_j|\) with \(\|\gamma_i-\gamma_j\|\).
+            </p>
+          </article>
+
+          <article class="card wide">
+            <div class="project-title">
+              <h3>Comparing distances</h3>
+              <span class="status">Cauchy–Schwarz</span>
+            </div>
+
+            <p>
+              If
+            </p>
+
+            <div class="math-panel" style="margin-top: 16px;">
+              <p class="formula">\[
+                u_i-u_j=-\sum_{k=1}^{n}r_k(\gamma_{i,k}-\gamma_{j,k}),
+              \]</p>
+            </div>
+
+            <p style="margin-top: 16px;">
+              then Cauchy–Schwarz gives
+            </p>
+
+            <div class="math-panel" style="margin-top: 16px;">
+              <p class="formula">\[
+                |u_i-u_j|
+                \le
+                \left(\sum_{k=1}^{n}r_k^2\right)^{1/2}
+                \|\gamma_i-\gamma_j\|.
+              \]</p>
+            </div>
+
+            <p style="margin-top: 16px;">
+              Hence
+            </p>
+
+            <div class="math-panel" style="margin-top: 16px;">
+              <p class="formula">\[
+                \|\gamma_i-\gamma_j\|
+                \ge
+                \left(\sum_{k=1}^{n}r_k^2\right)^{-1/2}
+                |u_i-u_j|.
+              \]</p>
+            </div>
+          </article>
+
+          <article class="card svg-card">
+            <svg viewBox="0 0 430 420" role="img" aria-label="Distance comparison from u-line to solution space">
+              <line class="axis" x1="80" y1="115" x2="350" y2="115"></line>
+              <circle class="point-green" cx="140" cy="115" r="6"></circle>
+              <circle class="point-green" cx="250" cy="115" r="6"></circle>
+              <path class="gold-line" d="M140 90 L250 90"></path>
+              <text class="svg-small" x="150" y="78">distance on u-line</text>
+
+              <path class="arrow" d="M215 150 L215 205"></path>
+              <text class="svg-small" x="230" y="184">controlled loss</text>
+
+              <line class="axis" x1="80" y1="350" x2="350" y2="350"></line>
+              <line class="axis" x1="80" y1="350" x2="80" y2="225"></line>
+              <circle class="point-blue" cx="145" cy="310" r="7"></circle>
+              <circle class="point-blue" cx="285" cy="250" r="7"></circle>
+              <path class="gold-line" d="M145 310 L285 250"></path>
+              <text class="svg-small" x="165" y="235">distance in solution space</text>
+            </svg>
+          </article>
+
+          <article class="card">
+            <div class="project-title">
+              <h3>The basic DMMₙ statement</h3>
+              <span class="status">Product bound</span>
+            </div>
+
+            <p>
+              For isolated solutions
+              \(\gamma_1,\ldots,\gamma_D\in(\mathbb{C}^{*})^n\), the multivariate
+              DMM theorem gives lower bounds for products of the form
+            </p>
+
+            <div class="math-panel" style="margin-top: 16px;">
+              <p class="formula">\[
+                \prod_{(i,j)\in\Omega}\|\gamma_i-\gamma_j\|.
+              \]</p>
+            </div>
+
+            <p style="margin-top: 16px;">
+              In the integer-coefficient case, it also gives information about
+              coordinate bounds and the separation number \(\operatorname{sep}(\Sigma)\).
+            </p>
+          </article>
+
+          <article class="card">
+            <div class="project-title">
+              <h3>What changes from DMM₁?</h3>
+              <span class="status">Pattern</span>
+            </div>
+
+            <p>
+              DMM₁ has one polynomial and roots already on a line. DMMₙ has a system,
+              a separating projection, a \(u\)-resultant, and mixed volume instead of
+              the degree-only Bézout count.
+            </p>
+          </article>
+
+          <article class="card">
+            <div class="project-title">
+              <h3>What the bound depends on</h3>
+              <span class="status">Parameters</span>
+            </div>
+
+            <p>
+              The resulting estimates depend on the number of solutions, coefficient
+              size, the separating form, and the mixed volumes of the Newton polytopes.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="applications">
+      <div class="container">
+        <div class="section-head">
+          <h2>Applications and extensions</h2>
+          <p class="section-intro">
+            The presentation closes by indicating why such bounds matter: they control
+            precision, subdivision complexity, and the size of computations in concrete
+            algebraic problems.
+          </p>
+        </div>
+
+        <div class="grid">
+          <article class="card">
+            <div class="project-title">
+              <h3>Positive-dimensional systems</h3>
+              <span class="status">Extension</span>
+            </div>
+
+            <p>
+              If the solution set contains curves or surfaces, the simple resultant
+              picture is no longer enough. The same philosophy continues, but the
+              method needs a more technical adaptation to isolate the relevant
+              zero-dimensional information.
+            </p>
+          </article>
+
+          <article class="card wide">
+            <div class="project-title">
+              <h3>Eigenvectors and eigenvalues</h3>
+              <span class="status">Application</span>
+            </div>
+
+            <p>
+              For an integer matrix \(A\), eigenvalue–eigenvector pairs can be encoded
+              as a polynomial system:
+            </p>
+
+            <div class="math-panel" style="margin-top: 16px;">
+              <p class="formula">\[
+                Av=\lambda v,
+                \qquad
+                \sum_i v_i^2=1.
+              \]</p>
+            </div>
+
+            <p style="margin-top: 16px;">
+              Mixed volume can give a smaller bound than a naive Bézout estimate, which
+              leads to better control on the number of bits needed in the computation.
+            </p>
+          </article>
+
+          <article class="card wide">
+            <div class="project-title">
+              <h3>Subdivision algorithms</h3>
+              <span class="status">Root isolation</span>
+            </div>
+
+            <p>
+              Subdivision methods isolate roots by repeatedly partitioning the search
+              region. If two roots are very close, more subdivisions may be needed.
+              DMM-type bounds control the total number of subdivision steps required.
+            </p>
+          </article>
+
+          <article class="card svg-card">
+            <svg viewBox="0 0 430 330" role="img" aria-label="Subdivision boxes with roots">
+              <rect x="100" y="55" width="210" height="230" fill="rgba(112,200,255,0.10)" stroke="#70c8ff" stroke-width="3"></rect>
+
+              <line class="axis" x1="100" y1="170" x2="310" y2="170"></line>
+              <line class="axis" x1="205" y1="55" x2="205" y2="285"></line>
+
+              <line class="dash" x1="205" y1="112" x2="310" y2="112"></line>
+              <line class="dash" x1="257" y1="55" x2="257" y2="170"></line>
+
+              <ellipse cx="150" cy="225" rx="8" ry="14" fill="#ff8d8d"></ellipse>
+              <ellipse cx="275" cy="95" rx="8" ry="14" fill="#ff8d8d"></ellipse>
+
+              <text class="svg-small" x="85" y="310">closer roots force more subdivisions</text>
+            </svg>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="conclusion">
+      <div class="container">
+        <div class="section-head">
+          <h2>Main takeaway</h2>
+          <p class="section-intro">
+            The presentation’s core message is that multivariate separation information
+            can be approached by a disciplined reduction to one variable.
+          </p>
+        </div>
+
+        <div class="grid">
+          <article class="card full">
+            <div class="project-title">
+              <h3>The mechanism in one line</h3>
+              <span class="status">Conclusion</span>
+            </div>
+
+            <div class="svg-card">
+              <svg viewBox="0 0 840 260" role="img" aria-label="Main conclusion flow">
+                <rect class="flow-box-blue" x="45" y="90" width="135" height="70" rx="16"></rect>
+                <text class="svg-label" x="78" y="118">DMM₁</text>
+                <text class="svg-small" x="75" y="140">one polynomial</text>
+
+                <rect class="flow-box" x="220" y="90" width="145" height="70" rx="16"></rect>
+                <text class="svg-label" x="248" y="118">separating</text>
+                <text class="svg-small" x="250" y="140">linear form</text>
+
+                <rect class="flow-box-gold" x="405" y="90" width="145" height="70" rx="16"></rect>
+                <text class="svg-label" x="438" y="118">eliminate</text>
+                <text class="svg-small" x="435" y="140">x₁,…,xₙ</text>
+
+                <rect class="flow-box-green" x="590" y="90" width="160" height="70" rx="16"></rect>
+                <text class="svg-label" x="632" y="118">DMMₙ</text>
+                <text class="svg-small" x="622" y="140">polynomial systems</text>
+
+                <path class="arrow" d="M180 125 L220 125"></path>
+                <path class="arrow" d="M365 125 L405 125"></path>
+                <path class="arrow" d="M550 125 L590 125"></path>
+              </svg>
+            </div>
+
+            <p class="quote-block" style="margin-top: 34px;">
+              If the solutions of a system can be brought onto one variable without
+              collisions, then the known one-variable separation bound becomes a tool
+              for controlling distances in the original multivariate system.
+            </p>
+          </article>
+
+          <article class="card">
+            <h3>What is useful</h3>
+            <p>
+              Separation bounds are not only theoretical estimates. They tell us how
+              much precision is needed to distinguish solutions in practice.
+            </p>
+          </article>
+
+          <article class="card">
+            <h3>What is hidden</h3>
+            <p>
+              The precise constants and technical estimates of the resultant are left
+              outside this exposition. The page keeps the structural mechanism.
+            </p>
+          </article>
+
+          <article class="card">
+            <h3>What remains</h3>
+            <p>
+              The positive-dimensional case shows that the same method has a deeper
+              continuation beyond the basic isolated-solution setting.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-grid">
+      <div>© 2026 Constantinos Gkogkotsis</div>
+      <div>The DMM Bound</div>
+    </div>
+  </footer>
+
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      document.body.classList.add("page-ready");
+    });
+
+    window.addEventListener("pageshow", () => {
+      document.body.classList.remove("page-leaving");
+      document.body.classList.add("page-ready");
+    });
+
+    document.querySelectorAll("a[href]").forEach(link => {
+      link.addEventListener("click", event => {
+        const href = link.getAttribute("href");
+
+        if (!href) return;
+
+        const opensNewTab = link.target === "_blank";
+        const isEmail = href.startsWith("mailto:");
+        const isPhone = href.startsWith("tel:");
+        const isExternal = href.startsWith("http");
+
+        if (opensNewTab || isEmail || isPhone || isExternal) {
+          return;
+        }
+
+        const currentUrl = new URL(window.location.href);
+        const targetUrl = new URL(href, window.location.href);
+
+        const normalizePath = path => {
+          if (path === "/" || path.endsWith("/")) return "/index.html";
+          return path;
+        };
+
+        const samePage =
+          normalizePath(currentUrl.pathname) === normalizePath(targetUrl.pathname);
+
+        if (samePage) {
+          event.preventDefault();
+
+          if (targetUrl.hash) {
+            const target = document.querySelector(targetUrl.hash);
+
+            if (target) {
+              target.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+              });
+
+              history.pushState(null, "", targetUrl.hash);
+            }
+
+            return;
+          }
+
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+          });
+
+          return;
+        }
+
+        event.preventDefault();
+
+        document.body.classList.remove("page-ready");
+        document.body.classList.add("page-leaving");
+
+        setTimeout(() => {
+          window.location.href = href;
+        }, 420);
+      });
+    });
+  </script>
+</body>
+</html>
