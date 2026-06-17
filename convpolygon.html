@@ -335,23 +335,30 @@
       font-size: 0.95rem;
     }
 
-    .algorithm li {
-      display: grid;
-      grid-template-columns: 36px 1fr;
-      gap: 12px;
-      padding: 5px 0;
+        .algorithm li {
+      position: relative;
+      display: block;
+      padding: 7px 0 7px 48px;
       border-bottom: 1px solid rgba(255,255,255,0.06);
     }
-
+    
     .algorithm li:last-child {
       border-bottom: none;
     }
-
+    
     .algorithm li::before {
       counter-increment: line;
       content: counter(line);
+      position: absolute;
+      left: 0;
+      top: 7px;
+      width: 28px;
       color: var(--gold);
       font-variant-numeric: tabular-nums;
+    }
+    
+    .MathJax {
+      display: inline !important;
     }
 
     .note {
