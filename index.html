@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>Constantinos Gkogkotsis</title>
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
   <style>
     :root {
       --bg: #080a0f;
@@ -41,6 +42,26 @@
         linear-gradient(180deg, #080a0f 0%, #0b0e14 45%, #080a0f 100%);
       color: var(--text);
       line-height: 1.65;
+
+      opacity: 0;
+      transform: translateY(10px);
+      filter: blur(4px);
+      transition:
+        opacity 420ms ease,
+        transform 420ms ease,
+        filter 420ms ease;
+    }
+
+    body.page-ready {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+
+    body.page-leaving {
+      opacity: 0;
+      transform: translateY(-10px);
+      filter: blur(4px);
     }
 
     a {
@@ -436,26 +457,26 @@
 </head>
 
 <body id="top">
-       <header>
-  <div class="container">
-    <nav>
-      <a class="brand" href="index.html">
-        <span class="brand-symbol">∫∂</span>
-        <span>Constantinos Gkogkotsis</span>
-      </a>
+  <header>
+    <div class="container">
+      <nav>
+        <a class="brand" href="#top">
+          <span class="brand-symbol">∫∂</span>
+          <span>Constantinos Gkogkotsis</span>
+        </a>
 
-            <div class="nav-links">
-  <a href="index.html">Home</a>
-  <a href="index.html#direction">Direction</a>
-  <a href="index.html#projects">Projects</a>
-  <a href="index.html#notes">Notes</a>
-  <a href="index.html#updates">Updates</a>
-  <a href="cv.html">CV</a>
-  <a href="index.html#contact">Contact</a>
-</div>
-    </nav>
-  </div>
-</header>
+        <div class="nav-links">
+          <a href="#top">Home</a>
+          <a href="#direction">Direction</a>
+          <a href="#projects">Projects</a>
+          <a href="#notes">Notes</a>
+          <a href="#updates">Updates</a>
+          <a href="cv.html">CV</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </nav>
+    </div>
+  </header>
 
   <main>
     <section class="hero">
@@ -478,7 +499,7 @@
           
           <p class="hero-text">
             My main orientation is toward algebra, geometry, and logic, and the structural
-             problems that arise between them.
+            problems that arise between them.
           </p>
 
           <div class="hero-actions">
@@ -541,69 +562,67 @@
     </section>
 
     <section id="projects">
-  <div class="container">
-    <div class="section-head">
-      <h2>Selected projects</h2>
-      <p class="section-intro">
-        A small selection of projects, talks, and notes. Some are complete;
-        others are being developed into more polished mathematical writing.
-      </p>
-    </div>
-
-    <div class="grid">
-      <article class="card wide">
-        <div class="project-title">
-          <h3>Traversing a convex polygon</h3>
-          <span class="status">Algorithms</span>
+      <div class="container">
+        <div class="section-head">
+          <h2>Selected projects</h2>
+          <p class="section-intro">
+            A small selection of projects, talks, and notes. Some are complete;
+            others are being developed into more polished mathematical writing.
+          </p>
         </div>
-        <p>
-          A dynamic-programming project on traversing a convex polygon, developed
-          in the context of algorithm design and analysis.
-        </p>
-        <a class="update-link" href="convpolygon.html">
-          Open project →
-        </a>
-      </article>
 
-      <article class="card">
-        <div class="project-title">
-          <h3>λ-calculus</h3>
-          <span class="status">Talk</span>
+        <div class="grid">
+          <article class="card wide">
+            <div class="project-title">
+              <h3>Traversing a convex polygon</h3>
+              <span class="status">Algorithms</span>
+            </div>
+            <p>
+              A dynamic-programming project on traversing a convex polygon, developed
+              in the context of algorithm design and analysis.
+            </p>
+            <a class="update-link" href="convpolygon.html">
+              Open project →
+            </a>
+          </article>
+
+          <article class="card">
+            <div class="project-title">
+              <h3>λ-calculus</h3>
+              <span class="status">Talk</span>
+            </div>
+            <p>
+              An expository talk connected to recursive functions, computability,
+              and formal models of calculation.
+            </p>
+          </article>
+
+          <article class="card">
+            <div class="project-title">
+              <h3>Why the circle is not a line</h3>
+              <span class="status">Note</span>
+            </div>
+            <p>
+              A topology note collecting several different obstructions to a
+              homeomorphism between the circle and the real line.
+            </p>
+          </article>
+
+          <article class="card wide">
+            <div class="project-title">
+              <h3>Mixed Volume Reservoir</h3>
+              <span class="status">In preparation</span>
+            </div>
+            <p>
+              A growing collection around mixed volumes, polynomial systems,
+              computational algebra, algorithms, Julia experimentation, and the
+              material I gather while working toward a serious understanding of
+              this direction.
+            </p>
+          </article>
         </div>
-        <p>
-          An expository talk connected to recursive functions, computability,
-          and formal models of calculation.
-        </p>
-      </article>
-
-      <article class="card">
-        <div class="project-title">
-          <h3>Why the circle is not a line</h3>
-          <span class="status">Note</span>
-        </div>
-        <p>
-          A topology note collecting several different obstructions to a
-          homeomorphism between the circle and the real line.
-        </p>
-      </article>
-
-      <article class="card wide">
-        <div class="project-title">
-          <h3>Mixed Volume Reservoir</h3>
-          <span class="status">In preparation</span>
-        </div>
-        <p>
-          A growing collection around mixed volumes, polynomial systems,
-          computational algebra, algorithms, Julia experimentation, and the
-          material I gather while working toward a serious understanding of
-          this direction.
-        </p>
-      </article>
-    </div>
-  </div>
-</section>
-
-    
+      </div>
+    </section>
 
     <section id="notes">
       <div class="container">
@@ -655,88 +674,88 @@
         </div>
 
         <div class="update-subsection">
-  <h3 class="subsection-title">Events I plan to attend or watch</h3>
+          <h3 class="subsection-title">Events I plan to attend or watch</h3>
 
-  <div class="grid">
-    <article class="card update-card">
-      <div class="update-visual">∫∂</div>
+          <div class="grid">
+            <article class="card update-card">
+              <div class="update-visual">∫∂</div>
 
-      <div class="update-body">
-        <div class="project-title">
-          <h3>Third Congress of Greek Mathematicians</h3>
-          <span class="status">Congress</span>
+              <div class="update-body">
+                <div class="project-title">
+                  <h3>Third Congress of Greek Mathematicians</h3>
+                  <span class="status">Congress</span>
+                </div>
+
+                <p class="update-meta">
+                  29 June – 4 July 2026 · Athens, Greece · NKUA / NTUA
+                </p>
+
+                <p>
+                  The Third Congress of Greek Mathematicians is a broad mathematical congress
+                  organized by the Hellenic Mathematical Society. Its programme covers both
+                  theoretical and applied mathematics, with plenary lectures, invited lectures,
+                  sessions, and mini-symposia across many areas.
+                </p>
+
+                <a class="update-link" href="https://hms.gr/tcgm2026/pages/home.html" target="_blank" rel="noopener noreferrer">
+                  View event →
+                </a>
+              </div>
+            </article>
+
+            <article class="card update-card">
+              <div class="update-visual">∫∂</div>
+
+              <div class="update-body">
+                <div class="project-title">
+                  <h3>3rd Workshop of Greek Women in Mathematics</h3>
+                  <span class="status">Workshop</span>
+                </div>
+
+                <p class="update-meta">
+                  4 July 2026 · Department of Mathematics, NKUA · Carathéodory Amphitheatre
+                </p>
+
+                <p>
+                  A workshop organized by Greek Women in Mathematics. I am following it as
+                  part of the broader mathematical activity around the Greek mathematical
+                  community, with talks, participation opportunities, and mathematical
+                  exchange at NKUA.
+                </p>
+
+                <a class="update-link" href="https://sites.google.com/view/greek-women-in-mathematics-en/events/third-gwm-workshop" target="_blank" rel="noopener noreferrer">
+                  View event →
+                </a>
+              </div>
+            </article>
+
+            <article class="card update-card">
+              <div class="update-visual">∫∂</div>
+
+              <div class="update-body">
+                <div class="project-title">
+                  <h3>11th Summer School in Operator Theory</h3>
+                  <span class="status">Summer school</span>
+                </div>
+
+                <p class="update-meta">
+                  6–10 July 2026 · Department of Mathematics, NKUA · Athens, Greece
+                </p>
+
+                <p>
+                  A summer school introducing themes from Operator Theory and Operator
+                  Algebras, including C*-algebras, von Neumann algebras, operator systems,
+                  finite-dimensional approximations, classification, completely positive
+                  maps, and links with quantum information.
+                </p>
+
+                <a class="update-link" href="https://sites.google.com/view/11th-summer-school-in-operator/" target="_blank" rel="noopener noreferrer">
+                  View event →
+                </a>
+              </div>
+            </article>
+          </div>
         </div>
-
-        <p class="update-meta">
-          29 June – 4 July 2026 · Athens, Greece · NKUA / NTUA
-        </p>
-
-        <p>
-          The Third Congress of Greek Mathematicians is a broad mathematical congress
-          organized by the Hellenic Mathematical Society. Its programme covers both
-          theoretical and applied mathematics, with plenary lectures, invited lectures,
-          sessions, and mini-symposia across many areas.
-        </p>
-
-        <a class="update-link" href="https://hms.gr/tcgm2026/pages/home.html" target="_blank" rel="noopener noreferrer">
-          View event →
-        </a>
-      </div>
-    </article>
-
-    <article class="card update-card">
-      <div class="update-visual">∫∂</div>
-
-      <div class="update-body">
-        <div class="project-title">
-          <h3>3rd Workshop of Greek Women in Mathematics</h3>
-          <span class="status">Workshop</span>
-        </div>
-
-        <p class="update-meta">
-          4 July 2026 · Department of Mathematics, NKUA · Carathéodory Amphitheatre
-        </p>
-
-        <p>
-          A workshop organized by Greek Women in Mathematics. I am following it as
-          part of the broader mathematical activity around the Greek mathematical
-          community, with talks, participation opportunities, and mathematical
-          exchange at NKUA.
-        </p>
-
-        <a class="update-link" href="https://sites.google.com/view/greek-women-in-mathematics-en/events/third-gwm-workshop" target="_blank" rel="noopener noreferrer">
-          View event →
-        </a>
-      </div>
-    </article>
-
-    <article class="card update-card">
-      <div class="update-visual">∫∂</div>
-
-      <div class="update-body">
-        <div class="project-title">
-          <h3>11th Summer School in Operator Theory</h3>
-          <span class="status">Summer school</span>
-        </div>
-
-        <p class="update-meta">
-          6–10 July 2026 · Department of Mathematics, NKUA · Athens, Greece
-        </p>
-
-        <p>
-          A summer school introducing themes from Operator Theory and Operator
-          Algebras, including C*-algebras, von Neumann algebras, operator systems,
-          finite-dimensional approximations, classification, completely positive
-          maps, and links with quantum information.
-        </p>
-
-        <a class="update-link" href="https://sites.google.com/view/11th-summer-school-in-operator/" target="_blank" rel="noopener noreferrer">
-          View event →
-        </a>
-      </div>
-    </article>
-  </div>
-</div>
 
         <div class="update-subsection">
           <h3 class="subsection-title">Papers, talks, and tools I am following</h3>
@@ -845,19 +864,79 @@
       <div>Personal academic website</div>
     </div>
   </footer>
+
   <script>
-  document.querySelectorAll('a[href="#top"]').forEach(link => {
-    link.addEventListener('click', function (event) {
-      event.preventDefault();
-
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
-
-      history.replaceState(null, "", "index.html");
+    window.addEventListener("DOMContentLoaded", () => {
+      document.body.classList.add("page-ready");
     });
-  });
-</script>
+
+    window.addEventListener("pageshow", () => {
+      document.body.classList.remove("page-leaving");
+      document.body.classList.add("page-ready");
+    });
+
+    document.querySelectorAll("a[href]").forEach(link => {
+      link.addEventListener("click", event => {
+        const href = link.getAttribute("href");
+
+        if (!href) return;
+
+        const opensNewTab = link.target === "_blank";
+        const isEmail = href.startsWith("mailto:");
+        const isPhone = href.startsWith("tel:");
+        const isExternal = href.startsWith("http");
+
+        if (opensNewTab || isEmail || isPhone || isExternal) {
+          return;
+        }
+
+        const currentUrl = new URL(window.location.href);
+        const targetUrl = new URL(href, window.location.href);
+
+        const samePage =
+          currentUrl.pathname === targetUrl.pathname ||
+          (
+            (currentUrl.pathname === "/" || currentUrl.pathname.endsWith("/index.html")) &&
+            (targetUrl.pathname === "/" || targetUrl.pathname.endsWith("/index.html"))
+          );
+
+        if (samePage && targetUrl.hash) {
+          event.preventDefault();
+
+          if (targetUrl.hash === "#top") {
+            window.scrollTo({
+              top: 0,
+              behavior: "smooth"
+            });
+
+            history.replaceState(null, "", "index.html");
+            return;
+          }
+
+          const target = document.querySelector(targetUrl.hash);
+
+          if (target) {
+            target.scrollIntoView({
+              behavior: "smooth",
+              block: "start"
+            });
+
+            history.pushState(null, "", targetUrl.hash);
+          }
+
+          return;
+        }
+
+        event.preventDefault();
+
+        document.body.classList.remove("page-ready");
+        document.body.classList.add("page-leaving");
+
+        setTimeout(() => {
+          window.location.href = href;
+        }, 420);
+      });
+    });
+  </script>
 </body>
 </html>
