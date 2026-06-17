@@ -614,61 +614,61 @@
     </section>
 
     <section id="problem">
-      <div class="container">
-        <div class="section-head">
-          <h2>Problem statement</h2>
-          <p class="section-intro">
-            The original problem is written as a story about Dilcue, Otalp, and a
-            convex-polygon lake. The mathematical core is a shortest Hamiltonian path
-            problem with fixed endpoints, restricted by convex geometry.
-          </p>
+  <div class="container">
+    <div class="section-head">
+      <h2>Problem statement</h2>
+      <p class="section-intro">
+        The original problem is written as a story about Dilcue, Otalp, and a
+        convex-polygon lake. The mathematical core is a shortest Hamiltonian path
+        problem with fixed endpoints, restricted by convex geometry.
+      </p>
+    </div>
+
+    <div class="grid">
+      <article class="card wide">
+        <div class="project-title">
+          <h3>English formulation</h3>
+          <span class="status">Translation</span>
         </div>
 
-        <div class="grid">
-          <article class="card wide">
-            <div class="project-title">
-              <h3>English formulation</h3>
-              <span class="status">Translation</span>
-            </div>
+        <p>
+          The famous geometer and nature-lover Dilcue builds a lake whose shape is
+          a convex polygon with \(n\) vertices. At every vertex of the lake lies a
+          beautiful theorem of his friend Otalp, together with an elegant “Proof
+          from The Book.” A boat can be rented at the westernmost vertex \(s\) and
+          must be returned at the easternmost vertex \(t\). The goal is to visit all
+          \(n\) vertices while minimizing the total distance travelled. Since the
+          boat moves with constant speed, this is equivalent to minimizing the total
+          path length.
+        </p>
+      </article>
 
-            <p>
-              The famous geometer and nature-lover Dilcue builds a lake whose shape is
-              a convex polygon with \(n\) vertices. At every vertex of the lake lies a
-              beautiful theorem of his friend Otalp, together with an elegant “Proof
-              from The Book.” A boat can be rented at the westernmost vertex \(s\) and
-              must be returned at the easternmost vertex \(t\). The goal is to visit all
-              \(n\) vertices while minimizing the total distance travelled. Since the
-              boat moves with constant speed, this is equivalent to minimizing the total
-              path length.
-            </p>
-          </article>
+      <article class="card">
+        <h3>Target</h3>
+        <p>
+          Design an \(O(n^2)\) algorithm. The intended method is dynamic programming,
+          after extracting the geometric structure of the optimal path.
+        </p>
+      </article>
 
-          <article class="card">
-            <h3>Input</h3>
-            <p>
-              The coordinates of the \(n\) vertices of a convex polygon. We assume, for
-              simplicity, that no two vertices have the same \(x\)- or \(y\)-coordinate.
-            </p>
-          </article>
+      <article class="card">
+        <h3>Input</h3>
+        <p>
+          The coordinates of the \(n\) vertices of a convex polygon. We assume, for
+          simplicity, that no two vertices have the same \(x\)- or \(y\)-coordinate.
+        </p>
+      </article>
 
-          <article class="card">
-            <h3>Output</h3>
-            <p>
-              An ordering of the vertices that starts at \(s\), ends at \(t\), visits
-              every vertex, and minimizes the total Euclidean length.
-            </p>
-          </article>
-
-          <article class="card">
-            <h3>Target</h3>
-            <p>
-              Design an \(O(n^2)\) algorithm. The intended method is dynamic programming,
-              after extracting the geometric structure of the optimal path.
-            </p>
-          </article>
-        </div>
-      </div>
-    </section>
+      <article class="card">
+        <h3>Output</h3>
+        <p>
+          An ordering of the vertices that starts at \(s\), ends at \(t\), visits
+          every vertex, and minimizes the total Euclidean length.
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
 
     <section id="geometry">
       <div class="container">
@@ -1055,23 +1055,6 @@
               \(O(n^2)\). Each state is computed in constant time. Sorting gives
               \(O(n\log n)\), so the total running time is \(O(n^2)\).
             </p>
-          </article>
-
-          <article class="card svg-card">
-            <svg viewBox="0 0 420 280" role="img" aria-label="DP table size">
-              <rect x="80" y="35" width="240" height="180" rx="8" fill="rgba(93,180,232,0.26)" stroke="#70c8ff" stroke-width="3"></rect>
-
-              <line x1="80" y1="80" x2="320" y2="80" stroke="rgba(255,255,255,0.18)"></line>
-              <line x1="80" y1="125" x2="320" y2="125" stroke="rgba(255,255,255,0.18)"></line>
-              <line x1="80" y1="170" x2="320" y2="170" stroke="rgba(255,255,255,0.18)"></line>
-
-              <line x1="140" y1="35" x2="140" y2="215" stroke="rgba(255,255,255,0.18)"></line>
-              <line x1="200" y1="35" x2="200" y2="215" stroke="rgba(255,255,255,0.18)"></line>
-              <line x1="260" y1="35" x2="260" y2="215" stroke="rgba(255,255,255,0.18)"></line>
-
-              <text class="svg-label" x="135" y="245">(a + 1) × (b + 1) states</text>
-              <text class="svg-small" x="130" y="265">one constant-time update per state</text>
-            </svg>
           </article>
 
           <article class="card full">
