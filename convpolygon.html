@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Traversing a Convex Polygon | Constantinos Gkogkotsis</title>
+
+  <style>
+    :root {
+      --bg: #080a0f;
+      --bg-soft: #10131b;
+      --panel: rgba(255, 255, 255, 0.045);
+      --panel-strong: rgba(255, 255, 255, 0.075);
+      --text: #f2f2f0;
+      --muted: #aeb4c1;
+      --muted-2: #7f8796;
+      --line: rgba(255, 255, 255, 0.12);
+      --accent: #b7c9ff;
+      --accent-strong: #e5d6ff;
+      --gold: #d7c58f;
+      --green: #7ed6a5;
+      --red: #ff8d8d;
+      --blue-dark: #0b2a46;
+      --max: 1120px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 18% 8%, rgba(119, 144, 255, 0.16), transparent 31%),
+        radial-gradient(circle at 86% 12%, rgba(215, 197, 143, 0.10), transparent 28%),
+        linear-gradient(180deg, #080a0f 0%, #0b0e14 45%, #080a0f 100%);
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      width: min(var(--max), 92vw);
+      margin: 0 auto;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(18px);
+      background: rgba(8, 10, 15, 0.78);
+      border-bottom: 1px solid var(--line);
+    }
+
+    nav {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.05rem;
+      letter-spacing: 0.02em;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .brand-symbol {
+      display: inline-grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--accent);
+      background: rgba(255, 255, 255, 0.035);
+      font-size: 0.95rem;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      flex-wrap: wrap;
+      font-size: 0.94rem;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .hero {
+      padding: 110px 0 76px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 56px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--gold);
+      font-size: 0.82rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 34px;
+      height: 1px;
+      background: var(--gold);
+      opacity: 0.8;
+    }
+
+    h1 {
+      margin: 0 0 26px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 500;
+      font-size: clamp(3rem, 7vw, 6.2rem);
+      line-height: 0.95;
+      letter-spacing: -0.07em;
+    }
+
+    h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2rem, 3.8vw, 3.2rem);
+      font-weight: 500;
+      letter-spacing: -0.045em;
+      line-height: 1.05;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 1.08rem;
+      letter-spacing: -0.015em;
+    }
+
+    h4 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      color: var(--text);
+    }
+
+    .hero-text,
+    .section-intro,
+    p,
+    li {
+      color: var(--muted);
+    }
+
+    .hero-text {
+      max-width: 760px;
+      font-size: clamp(1.08rem, 1.6vw, 1.24rem);
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 34px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 18px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.035);
+      color: var(--text);
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: 0.18s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      text-decoration: none;
+      border-color: rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: #070910;
+      border-color: transparent;
+    }
+
+    section {
+      padding: 76px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: 0.7fr 1.3fr;
+      gap: 40px;
+      align-items: start;
+      margin-bottom: 34px;
+    }
+
+    .section-intro {
+      font-size: 1.05rem;
+      margin: 0;
+      max-width: 790px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .two-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .card {
+      min-height: 100%;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 24px;
+      background: var(--panel);
+    }
+
+    .card:hover {
+      background: var(--panel-strong);
+    }
+
+    .wide {
+      grid-column: span 2;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 18px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      background: rgba(255,255,255,0.025);
+    }
+
+    .project-title {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+
+    .status {
+      color: var(--muted-2);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      white-space: nowrap;
+    }
+
+    .math-panel {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      overflow-x: auto;
+    }
+
+    .formula {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.08rem;
+      color: var(--text);
+      margin: 0;
+    }
+
+    .algorithm {
+      counter-reset: line;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .algorithm li {
+      display: grid;
+      grid-template-columns: 36px 1fr;
+      gap: 12px;
+      padding: 5px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .algorithm li:last-child {
+      border-bottom: none;
+    }
+
+    .algorithm li::before {
+      counter-increment: line;
+      content: counter(line);
+      color: var(--gold);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .note {
+      border-left: 2px solid var(--gold);
+      padding-left: 18px;
+      color: var(--muted);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.18rem;
+      line-height: 1.5;
+    }
+
+    .svg-card {
+      display: grid;
+      place-items: center;
+      min-height: 310px;
+      padding: 18px;
+      overflow: hidden;
+    }
+
+    svg {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .svg-label {
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      font-size: 13px;
+      fill: var(--text);
+    }
+
+    .svg-small {
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      font-size: 11px;
+      fill: var(--muted);
+    }
+
+    .svg-math {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 15px;
+      fill: var(--text);
+    }
+
+    .lake {
+      fill: rgba(93, 180, 232, 0.35);
+      stroke: #70c8ff;
+      stroke-width: 3;
+    }
+
+    .chain-upper {
+      stroke: var(--green);
+      stroke-width: 4;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .chain-lower {
+      stroke: var(--gold);
+      stroke-width: 4;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .path-line {
+      stroke: var(--gold);
+      stroke-width: 3;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .dash {
+      stroke: var(--muted);
+      stroke-dasharray: 7 6;
+      stroke-width: 2;
+    }
+
+    .point {
+      fill: var(--gold);
+      stroke: var(--bg);
+      stroke-width: 2;
+    }
+
+    .point-blue {
+      fill: var(--accent);
+      stroke: var(--bg);
+      stroke-width: 2;
+    }
+
+    .red-line {
+      stroke: var(--red);
+      stroke-width: 4;
+      stroke-linecap: round;
+    }
+
+    .green-line {
+      stroke: var(--green);
+      stroke-width: 4;
+      stroke-linecap: round;
+    }
+
+    .arrow {
+      stroke: var(--accent);
+      stroke-width: 3;
+      fill: none;
+      marker-end: url(#arrowhead);
+    }
+
+    footer {
+      padding: 34px 0 48px;
+      color: var(--muted-2);
+      font-size: 0.92rem;
+    }
+
+    .footer-grid {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 900px) {
+      nav {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 18px 0;
+      }
+
+      .hero-grid,
+      .section-head,
+      .two-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .wide {
+        grid-column: span 1;
+      }
+
+      .hero {
+        padding-top: 82px;
+      }
+    }
+  </style>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <nav>
+        <a class="brand" href="index.html">
+          <span class="brand-symbol">∫∂</span>
+          <span>Constantinos Gkogkotsis</span>
+        </a>
+
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="#problem">Problem</a>
+          <a href="#geometry">Geometry</a>
+          <a href="#dp">Dynamic programming</a>
+          <a href="#algorithm">Algorithm</a>
+          <a href="#correctness">Correctness</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow">Algorithms · Dynamic programming · Geometry</div>
+
+          <h1>Traversing a convex polygon.</h1>
+
+          <p class="hero-text">
+            An integrated project page based on a presentation for the course
+            <em>Introduction to Algorithm Design and Analysis</em>. The problem asks for
+            a shortest route from the westernmost to the easternmost vertex of a convex
+            polygon while visiting every vertex.
+          </p>
+
+          <p class="hero-text">
+            The key point is that convexity turns an apparently factorial search over
+            possible orders into a structured dynamic-programming problem over two
+            ordered chains.
+          </p>
+
+          <div class="hero-actions">
+            <a class="btn primary" href="#algorithm">View algorithm</a>
+            <a class="btn" href="#geometry">Geometric facts</a>
+            <a class="btn" href="index.html#projects">Back to projects</a>
+          </div>
+        </div>
+
+        <aside class="card svg-card">
+          <svg viewBox="0 0 500 330" role="img" aria-label="Convex polygon lake with upper and lower chains">
+            <defs>
+              <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                <polygon points="0 0, 10 3.5, 0 7" fill="#b7c9ff"></polygon>
+              </marker>
+            </defs>
+
+            <polygon class="lake" points="70,165 145,85 255,55 365,90 430,165 360,245 250,280 140,245"></polygon>
+            <line class="dash" x1="70" y1="165" x2="430" y2="165"></line>
+
+            <polyline class="chain-upper" points="70,165 145,85 255,55 365,90 430,165"></polyline>
+            <polyline class="chain-lower" points="70,165 140,245 250,280 360,245 430,165"></polyline>
+
+            <circle class="point" cx="70" cy="165" r="6"></circle>
+            <circle class="point" cx="430" cy="165" r="6"></circle>
+            <circle class="point-blue" cx="145" cy="85" r="5"></circle>
+            <circle class="point-blue" cx="255" cy="55" r="5"></circle>
+            <circle class="point-blue" cx="365" cy="90" r="5"></circle>
+            <circle class="point-blue" cx="140" cy="245" r="5"></circle>
+            <circle class="point-blue" cx="250" cy="280" r="5"></circle>
+            <circle class="point-blue" cx="360" cy="245" r="5"></circle>
+
+            <text class="svg-label" x="52" y="158">s</text>
+            <text class="svg-label" x="438" y="158">t</text>
+            <text class="svg-label" x="132" y="78">u₁</text>
+            <text class="svg-label" x="246" y="47">u₂</text>
+            <text class="svg-label" x="360" y="82">u₃</text>
+            <text class="svg-label" x="121" y="268">v₁</text>
+            <text class="svg-label" x="241" y="305">v₂</text>
+            <text class="svg-label" x="363" y="268">v₃</text>
+            <text class="svg-small" x="240" y="154">ℓ = st</text>
+            <text class="svg-small" x="200" y="30">upper chain</text>
+            <text class="svg-small" x="200" y="322">lower chain</text>
+          </svg>
+        </aside>
+      </div>
+    </section>
+
+    <section id="problem">
+      <div class="container">
+        <div class="section-head">
+          <h2>Problem statement</h2>
+          <p class="section-intro">
+            The original problem is written as a story about Dilcue, Otalp, and a
+            convex-polygon lake. The mathematical core is a shortest Hamiltonian path
+            problem with fixed endpoints, restricted by convex geometry.
+          </p>
+        </div>
+
+        <div class="grid">
+          <article class="card wide">
+            <div class="project-title">
+              <h3>English formulation</h3>
+              <span class="status">Translation</span>
+            </div>
+
+            <p>
+              The famous geometer and nature-lover Dilcue builds a lake whose shape is
+              a convex polygon with \(n\) vertices. At every vertex of the lake lies a
+              beautiful theorem of his friend Otalp, together with an elegant “Proof
+              from The Book.” A boat can be rented at the westernmost vertex \(s\) and
+              must be returned at the easternmost vertex \(t\). The goal is to visit all
+              \(n\) vertices while minimizing the total distance travelled. Since the
+              boat moves with constant speed, this is equivalent to minimizing the total
+              path length.
+            </p>
+          </article>
+
+          <article class="card">
+            <h3>Input</h3>
+            <p>
+              The coordinates of the \(n\) vertices of a convex polygon. We assume, for
+              simplicity, that no two vertices have the same \(x\)- or \(y\)-coordinate.
+            </p>
+          </article>
+
+          <article class="card">
+            <h3>Output</h3>
+            <p>
+              An ordering of the vertices that starts at \(s\), ends at \(t\), visits
+              every vertex, and minimizes the total Euclidean length.
+            </p>
+          </article>
+
+          <article class="card">
+            <h3>Target</h3>
+            <p>
+              Design an \(O(n^2)\) algorithm. The intended method is dynamic programming,
+              after extracting the geometric structure of the optimal path.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="geometry">
+      <div class="container">
+        <div class="section-head">
+          <h2>Geometric structure</h2>
+          <p class="section-intro">
+            Two geometric facts reduce the search space. First, a shortest valid path
+            has no self-intersections. Second, on each side of the line \(st\), the
+            vertices must be visited from west to east.
+          </p>
+        </div>
+
+        <div class="two-grid">
+          <article class="card">
+            <div class="project-title">
+              <h3>1. A shortest path does not cross itself</h3>
+              <span class="status">Uncrossing</span>
+            </div>
+
+            <p>
+              If two non-adjacent edges \(ab\) and \(cd\) cross internally, we can
+              replace them by \(ac\) and \(bd\). By the triangle inequality in the
+              crossing quadrilateral, the new pair is shorter:
+            </p>
+
+            <div class="math-panel" style="margin-top: 16px;">
+              <p class="formula">\[
+                |ab| + |cd| > |ac| + |bd|.
+              \]</p>
+            </div>
+
+            <p style="margin-top: 16px;">
+              Therefore a crossing path cannot be optimal.
+            </p>
+          </article>
+
+          <article class="card svg-card">
+            <svg viewBox="0 0 500 300" role="img" aria-label="Uncrossing two crossing edges">
+              <defs>
+                <marker id="arrowhead2" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                  <polygon points="0 0, 10 3.5, 0 7" fill="#b7c9ff"></polygon>
+                </marker>
+              </defs>
+
+              <line class="red-line" x1="80" y1="60" x2="230" y2="240"></line>
+              <line class="red-line" x1="80" y1="240" x2="230" y2="60"></line>
+              <text class="svg-small" x="105" y="274">crossing edges</text>
+
+              <path d="M255 150 L310 150" class="arrow" marker-end="url(#arrowhead2)"></path>
+
+              <line class="green-line" x1="350" y1="60" x2="350" y2="240"></line>
+              <line class="green-line" x1="430" y1="60" x2="430" y2="240"></line>
+              <text class="svg-small" x="348" y="274">uncrossed edges</text>
+
+              <circle class="point" cx="80" cy="60" r="5"></circle>
+              <circle class="point" cx="230" cy="240" r="5"></circle>
+              <circle class="point" cx="80" cy="240" r="5"></circle>
+              <circle class="point" cx="230" cy="60" r="5"></circle>
+
+              <circle class="point" cx="350" cy="60" r="5"></circle>
+              <circle class="point" cx="350" cy="240" r="5"></circle>
+              <circle class="point" cx="430" cy="60" r="5"></circle>
+              <circle class="point" cx="430" cy="240" r="5"></circle>
+
+              <text class="svg-label" x="68" y="50">a</text>
+              <text class="svg-label" x="236" y="250">b</text>
+              <text class="svg-label" x="67" y="260">c</text>
+              <text class="svg-label" x="236" y="54">d</text>
+              <text class="svg-label" x="337" y="50">a</text>
+              <text class="svg-label" x="337" y="260">c</text>
+              <text class="svg-label" x="437" y="50">d</text>
+              <text class="svg-label" x="437" y="260">b</text>
+            </svg>
+          </article>
+
+          <article class="card svg-card">
+            <svg viewBox="0 0 500 330" role="img" aria-label="Upper and lower chains ordered west to east">
+              <polygon class="lake" points="70,165 145,85 255,55 365,90 430,165 360,245 250,280 140,245"></polygon>
+              <line class="dash" x1="70" y1="165" x2="430" y2="165"></line>
+
+              <path class="chain-upper" d="M70 165 C130 105, 220 45, 255 55 C310 65, 345 80, 430 165"></path>
+              <path class="chain-lower" d="M70 165 C125 230, 190 285, 250 280 C315 275, 365 245, 430 165"></path>
+
+              <circle class="point" cx="70" cy="165" r="6"></circle>
+              <circle class="point" cx="430" cy="165" r="6"></circle>
+              <circle class="point-blue" cx="145" cy="85" r="5"></circle>
+              <circle class="point-blue" cx="255" cy="55" r="5"></circle>
+              <circle class="point-blue" cx="365" cy="90" r="5"></circle>
+              <circle class="point-blue" cx="140" cy="245" r="5"></circle>
+              <circle class="point-blue" cx="250" cy="280" r="5"></circle>
+              <circle class="point-blue" cx="360" cy="245" r="5"></circle>
+
+              <text class="svg-label" x="52" y="158">s</text>
+              <text class="svg-label" x="438" y="158">t</text>
+              <text class="svg-label" x="132" y="78">u₁</text>
+              <text class="svg-label" x="246" y="47">u₂</text>
+              <text class="svg-label" x="360" y="82">u₃</text>
+              <text class="svg-label" x="121" y="268">v₁</text>
+              <text class="svg-label" x="241" y="305">v₂</text>
+              <text class="svg-label" x="363" y="268">v₃</text>
+              <text class="svg-small" x="238" y="154">ℓ = st</text>
+              <text class="svg-small" x="185" y="105">west → east order on U</text>
+              <text class="svg-small" x="176" y="242">west → east order on L</text>
+            </svg>
+          </article>
+
+          <article class="card">
+            <div class="project-title">
+              <h3>2. Vertices on the same side are ordered</h3>
+              <span class="status">Monotonicity</span>
+            </div>
+
+            <p>
+              Let \(\ell = st\). The line \(\ell\) separates the remaining vertices into
+              an upper chain \(U=(u_1,\ldots,u_a)\) and a lower chain
+              \(L=(v_1,\ldots,v_b)\), each sorted by increasing \(x\)-coordinate.
+            </p>
+
+            <p style="margin-top: 14px;">
+              In an optimal path, vertices from the same chain appear in this
+              west-to-east order. Otherwise the path makes a backward move on one side
+              of \(\ell\), forcing a crossing inside the convex polygon, contradicting
+              the uncrossing fact.
+            </p>
+
+            <div class="math-panel" style="margin-top: 16px;">
+              <p class="formula">\[
+                U=(u_1,\ldots,u_a), \quad L=(v_1,\ldots,v_b),
+                \quad a+b=n-2.
+              \]</p>
+            </div>
+          </article>
+        </div>
+
+        <p class="note" style="margin-top: 34px;">
+          Once the order inside each chain is fixed, the only remaining choice is the
+          interleaving: at each step do we take the next upper vertex or the next lower
+          vertex?
+        </p>
+      </div>
+    </section>
+
+    <section id="dp">
+      <div class="container">
+        <div class="section-head">
+          <h2>Dynamic programming</h2>
+          <p class="section-intro">
+            The state records how many upper-chain and lower-chain vertices have already
+            been taken, plus the side on which the partial path currently ends.
+          </p>
+        </div>
+
+        <div class="two-grid">
+          <article class="card">
+            <div class="project-title">
+              <h3>States</h3>
+              <span class="status">Subproblems</span>
+            </div>
+
+            <p>
+              Define \(u_0=v_0=s\). For \(0\le i\le a\) and \(0\le j\le b\):
+            </p>
+
+            <div class="math-panel" style="margin-top: 16px;">
+              <p class="formula">\[
+                M_U(i,j)=\text{best partial path ending at }u_i,
+              \]</p>
+              <p class="formula">\[
+                M_L(i,j)=\text{best partial path ending at }v_j.
+              \]</p>
+            </div>
+
+            <p style="margin-top: 16px;">
+              In state \((i,j)\), the path has already visited
+              \(u_1,\ldots,u_i\) and \(v_1,\ldots,v_j\). The only information we must
+              remember is the endpoint of the partial path.
+            </p>
+          </article>
+
+          <article class="card svg-card">
+            <svg viewBox="0 0 520 330" role="img" aria-label="Dynamic programming state on polygon">
+              <polygon class="lake" points="70,165 145,85 255,55 365,90 430,165 360,245 250,280 140,245"></polygon>
+              <line class="dash" x1="70" y1="165" x2="430" y2="165"></line>
+
+              <polyline class="chain-upper" points="70,165 145,85 255,55"></polyline>
+              <polyline class="chain-lower" points="70,165 140,245 250,280"></polyline>
+              <polyline stroke="rgba(255,255,255,0.28)" stroke-width="3" fill="none" points="255,55 365,90 430,165 360,245 250,280"></polyline>
+
+              <circle class="point" cx="70" cy="165" r="6"></circle>
+              <circle class="point" cx="430" cy="165" r="6"></circle>
+              <circle class="point-blue" cx="145" cy="85" r="5"></circle>
+              <circle class="point-blue" cx="255" cy="55" r="5"></circle>
+              <circle class="point-blue" cx="365" cy="90" r="5"></circle>
+              <circle class="point-blue" cx="140" cy="245" r="5"></circle>
+              <circle class="point-blue" cx="250" cy="280" r="5"></circle>
+              <circle class="point-blue" cx="360" cy="245" r="5"></circle>
+
+              <rect x="285" y="118" width="185" height="80" rx="14" fill="rgba(255,255,255,0.055)" stroke="rgba(255,255,255,0.14)"></rect>
+              <text class="svg-label" x="305" y="144">state (i,j)</text>
+              <text class="svg-small" x="305" y="168">first i upper vertices</text>
+              <text class="svg-small" x="305" y="188">first j lower vertices</text>
+
+              <text class="svg-label" x="52" y="158">s</text>
+              <text class="svg-label" x="438" y="158">t</text>
+              <text class="svg-label" x="132" y="78">u₁</text>
+              <text class="svg-label" x="246" y="47">uᵢ</text>
+              <text class="svg-label" x="362" y="82">uᵢ₊₁</text>
+              <text class="svg-label" x="121" y="268">v₁</text>
+              <text class="svg-label" x="241" y="305">vⱼ</text>
+              <text class="svg-label" x="363" y="268">vⱼ₊₁</text>
+            </svg>
+          </article>
+        </div>
+
+        <div class="grid" style="margin-top: 18px;">
+          <article class="card wide">
+            <h3>Recurrences</h3>
+
+            <p>
+              To end at \(u_i\), the previous vertex is either \(u_{i-1}\), continuing
+              on the upper chain, or \(v_j\), switching from the lower chain.
+            </p>
+
+            <div class="math-panel" style="margin-top: 16px;">
+              <p class="formula">\[
+                M_U(i,j)=
+                \min\{M_U(i-1,j)+d(u_{i-1},u_i),\,
+                       M_L(i-1,j)+d(v_j,u_i)\}.
+              \]</p>
+            </div>
+
+            <p style="margin-top: 18px;">
+              Similarly, to end at \(v_j\), the previous vertex is either \(u_i\) or
+              \(v_{j-1}\).
+            </p>
+
+            <div class="math-panel" style="margin-top: 16px;">
+              <p class="formula">\[
+                M_L(i,j)=
+                \min\{M_U(i,j-1)+d(u_i,v_j),\,
+                       M_L(i,j-1)+d(v_{j-1},v_j)\}.
+              \]</p>
+            </div>
+
+            <p style="margin-top: 16px;">
+              The initial condition is \(M_U(0,0)=M_L(0,0)=0\), with impossible states
+              set to \(+\infty\).
+            </p>
+          </article>
+
+          <article class="card svg-card">
+            <svg viewBox="0 0 500 360" role="img" aria-label="Transition into upper chain">
+              <defs>
+                <marker id="arrowhead3" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                  <polygon points="0 0, 10 3.5, 0 7" fill="#b7c9ff"></polygon>
+                </marker>
+              </defs>
+
+              <polygon class="lake" points="80,180 150,100 250,70 360,110 430,180 340,260 230,285 130,245"></polygon>
+              <line class="dash" x1="80" y1="180" x2="430" y2="180"></line>
+
+              <circle class="point" cx="80" cy="180" r="6"></circle>
+              <circle class="point" cx="430" cy="180" r="6"></circle>
+              <circle class="point-blue" cx="210" cy="82" r="5"></circle>
+              <circle class="point-blue" cx="280" cy="82" r="5"></circle>
+              <circle class="point-blue" cx="250" cy="270" r="5"></circle>
+
+              <path d="M210 82 L280 82" class="arrow" marker-end="url(#arrowhead3)"></path>
+              <path d="M250 270 L280 82" class="arrow" marker-end="url(#arrowhead3)"></path>
+
+              <text class="svg-label" x="55" y="173">s</text>
+              <text class="svg-label" x="438" y="173">t</text>
+              <text class="svg-label" x="184" y="70">uᵢ₋₁</text>
+              <text class="svg-label" x="292" y="78">uᵢ</text>
+              <text class="svg-label" x="252" y="295">vⱼ</text>
+              <text class="svg-small" x="212" y="58">same chain</text>
+              <text class="svg-small" x="295" y="190">switch chain</text>
+              <text class="svg-small" x="118" y="330">To end at uᵢ, the previous vertex is only uᵢ₋₁ or vⱼ.</text>
+            </svg>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="algorithm">
+      <div class="container">
+        <div class="section-head">
+          <h2>Algorithm</h2>
+          <p class="section-intro">
+            The dynamic program fills states in increasing order of \(i+j\). This
+            ensures that every state depends only on states already computed.
+          </p>
+        </div>
+
+        <div class="two-grid">
+          <article class="card">
+            <div class="project-title">
+              <h3>Shortest path through the vertices</h3>
+              <span class="status">Pseudocode</span>
+            </div>
+
+            <ol class="algorithm">
+              <li>Let \(s\) be the westernmost vertex and \(t\) the easternmost vertex.</li>
+              <li>Split \(V(P)\setminus\{s,t\}\) into the upper chain \(U\) and lower chain \(L\) with respect to the line \(st\).</li>
+              <li>Sort \(U=(u_1,\ldots,u_a)\) and \(L=(v_1,\ldots,v_b)\) by increasing \(x\)-coordinate.</li>
+              <li>Set \(u_0\leftarrow s\), \(v_0\leftarrow s\), and initialize \(M_U,M_L\) with \(+\infty\).</li>
+              <li>Set \(M_U(0,0)\leftarrow 0\) and \(M_L(0,0)\leftarrow 0\).</li>
+              <li>For \(r=1,\ldots,a+b\):</li>
+              <li>For all \((i,j)\) with \(0\le i\le a\), \(0\le j\le b\), and \(i+j=r\):</li>
+              <li>If \(i\ge 1\), update \(M_U(i,j)\) from \(u_{i-1}\) or \(v_j\).</li>
+              <li>If \(j\ge 1\), update \(M_L(i,j)\) from \(u_i\) or \(v_{j-1}\).</li>
+              <li>Return \(\min\{M_U(a,b)+d(u_a,t),\,M_L(a,b)+d(v_b,t)\}\).</li>
+            </ol>
+          </article>
+
+          <article class="card">
+            <div class="project-title">
+              <h3>Final value and reconstruction</h3>
+              <span class="status">Backtracking</span>
+            </div>
+
+            <p>
+              Once all vertices have been visited, the partial path ends either at the
+              last upper-chain vertex \(u_a\) or the last lower-chain vertex \(v_b\).
+              We then add the final edge to \(t\):
+            </p>
+
+            <div class="math-panel" style="margin-top: 16px;">
+              <p class="formula">\[
+                \operatorname{OPT}=
+                \min\{M_U(a,b)+d(u_a,t),\,M_L(a,b)+d(v_b,t)\}.
+              \]</p>
+            </div>
+
+            <p style="margin-top: 16px;">
+              To recover the actual visiting order, store with every minimum the choice
+              that attained it. Backtracking from the final choice to \((0,0)\) gives
+              the path.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="correctness">
+      <div class="container">
+        <div class="section-head">
+          <h2>Correctness and complexity</h2>
+          <p class="section-intro">
+            The proof is a standard dynamic-programming induction once the geometric
+            structure has reduced the problem to interleaving two ordered chains.
+          </p>
+        </div>
+
+        <div class="grid">
+          <article class="card wide">
+            <div class="project-title">
+              <h3>Correctness invariant</h3>
+              <span class="status">Induction</span>
+            </div>
+
+            <p>
+              For every state \((i,j)\), the values \(M_U(i,j)\) and \(M_L(i,j)\) are
+              the minimum lengths of all valid partial paths that have visited exactly
+              \(u_1,\ldots,u_i\) and \(v_1,\ldots,v_j\), and end respectively at
+              \(u_i\) or \(v_j\).
+            </p>
+
+            <ul>
+              <li><strong>Base:</strong> \((0,0)\) is the trivial path at \(s\).</li>
+              <li><strong>Step:</strong> the last move to \(u_i\) is from \(u_{i-1}\) or \(v_j\); the last move to \(v_j\) is from \(u_i\) or \(v_{j-1}\).</li>
+              <li><strong>Conclusion:</strong> the recurrences check exactly all possible last moves, so every state is optimal.</li>
+            </ul>
+          </article>
+
+          <article class="card">
+            <div class="project-title">
+              <h3>Complexity</h3>
+              <span class="status">O(n²)</span>
+            </div>
+
+            <p>
+              There are \((a+1)(b+1)\) states in each table. Since \(a+b=n-2\), this is
+              \(O(n^2)\). Each state is computed in constant time. Sorting gives
+              \(O(n\log n)\), so the total running time is \(O(n^2)\).
+            </p>
+          </article>
+
+          <article class="card svg-card">
+            <svg viewBox="0 0 420 280" role="img" aria-label="DP table size">
+              <rect x="80" y="35" width="240" height="180" rx="8" fill="rgba(93,180,232,0.26)" stroke="#70c8ff" stroke-width="3"></rect>
+
+              <line x1="80" y1="80" x2="320" y2="80" stroke="rgba(255,255,255,0.18)"></line>
+              <line x1="80" y1="125" x2="320" y2="125" stroke="rgba(255,255,255,0.18)"></line>
+              <line x1="80" y1="170" x2="320" y2="170" stroke="rgba(255,255,255,0.18)"></line>
+
+              <line x1="140" y1="35" x2="140" y2="215" stroke="rgba(255,255,255,0.18)"></line>
+              <line x1="200" y1="35" x2="200" y2="215" stroke="rgba(255,255,255,0.18)"></line>
+              <line x1="260" y1="35" x2="260" y2="215" stroke="rgba(255,255,255,0.18)"></line>
+
+              <text class="svg-label" x="135" y="245">(a + 1) × (b + 1) states</text>
+              <text class="svg-small" x="130" y="265">one constant-time update per state</text>
+            </svg>
+          </article>
+
+          <article class="card full">
+            <div class="project-title">
+              <h3>Final picture</h3>
+              <span class="status">Geometry + DP</span>
+            </div>
+
+            <div class="svg-card">
+              <svg viewBox="0 0 760 390" role="img" aria-label="Final dynamic programming route in convex polygon">
+                <polygon class="lake" points="85,190 160,105 315,65 500,110 650,190 520,305 350,335 175,292"></polygon>
+
+                <polyline class="path-line" points="85,190 175,292 315,65 350,335 500,110 520,305 650,190"></polyline>
+
+                <circle class="point" cx="85" cy="190" r="7"></circle>
+                <circle class="point" cx="650" cy="190" r="7"></circle>
+                <circle class="point-blue" cx="160" cy="105" r="5"></circle>
+                <circle class="point-blue" cx="315" cy="65" r="5"></circle>
+                <circle class="point-blue" cx="500" cy="110" r="5"></circle>
+                <circle class="point-blue" cx="175" cy="292" r="5"></circle>
+                <circle class="point-blue" cx="350" cy="335" r="5"></circle>
+                <circle class="point-blue" cx="520" cy="305" r="5"></circle>
+
+                <text class="svg-label" x="62" y="182">s</text>
+                <text class="svg-label" x="662" y="182">t</text>
+                <text class="svg-label" x="150" y="96">u₁</text>
+                <text class="svg-label" x="307" y="54">u₂</text>
+                <text class="svg-label" x="498" y="100">u₃</text>
+                <text class="svg-label" x="158" y="318">v₁</text>
+                <text class="svg-label" x="342" y="362">v₂</text>
+                <text class="svg-label" x="528" y="330">v₃</text>
+
+                <rect x="95" y="28" width="220" height="60" rx="14" fill="rgba(255,255,255,0.055)" stroke="rgba(255,255,255,0.14)"></rect>
+                <text class="svg-small" x="118" y="55">No factorial search over all orders.</text>
+                <text class="svg-small" x="118" y="75">The geometry reveals the structure.</text>
+
+                <rect x="430" y="28" width="245" height="60" rx="14" fill="rgba(255,255,255,0.055)" stroke="rgba(255,255,255,0.14)"></rect>
+                <text class="svg-small" x="452" y="55">Two chains, one theorem at a time.</text>
+                <text class="svg-small" x="452" y="75">Dynamic programming builds the route.</text>
+              </svg>
+            </div>
+          </article>
+        </div>
+
+        <p class="note" style="margin-top: 34px;">
+          Final message: the geometry reveals the structure of the shape; dynamic
+          programming then builds the optimal route.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-grid">
+      <div>© 2026 Constantinos Gkogkotsis</div>
+      <div>Traversing a convex polygon</div>
+    </div>
+  </footer>
+</body>
+</html>
