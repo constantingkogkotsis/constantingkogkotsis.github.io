@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Why the Circle Is Not a Line | Constantinos Gkogkotsis</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+  <style>
+    :root {
+      --bg: #080a0f;
+      --bg-soft: #10131b;
+      --panel: rgba(255, 255, 255, 0.045);
+      --panel-strong: rgba(255, 255, 255, 0.075);
+      --text: #f2f2f0;
+      --muted: #aeb4c1;
+      --muted-2: #7f8796;
+      --line: rgba(255, 255, 255, 0.12);
+      --accent: #b7c9ff;
+      --accent-strong: #e5d6ff;
+      --gold: #d7c58f;
+      --red: #ff8d8d;
+      --green: #7ed6a5;
+      --max: 1120px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 18% 8%, rgba(119, 144, 255, 0.16), transparent 31%),
+        radial-gradient(circle at 86% 12%, rgba(215, 197, 143, 0.10), transparent 28%),
+        linear-gradient(180deg, #080a0f 0%, #0b0e14 45%, #080a0f 100%);
+      color: var(--text);
+      line-height: 1.65;
+
+      opacity: 0;
+      transform: translateY(10px);
+      filter: blur(4px);
+      transition:
+        opacity 420ms ease,
+        transform 420ms ease,
+        filter 420ms ease;
+    }
+
+    body.page-ready {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+
+    body.page-leaving {
+      opacity: 0;
+      transform: translateY(-10px);
+      filter: blur(4px);
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      width: min(var(--max), 92vw);
+      margin: 0 auto;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(18px);
+      background: rgba(8, 10, 15, 0.78);
+      border-bottom: 1px solid var(--line);
+    }
+
+    nav {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.05rem;
+      letter-spacing: 0.02em;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .brand-symbol {
+      display: inline-grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--accent);
+      background: rgba(255, 255, 255, 0.035);
+      font-size: 0.95rem;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      flex-wrap: wrap;
+      font-size: 0.94rem;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .hero {
+      padding: 110px 0 76px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.18fr 0.82fr;
+      gap: 56px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--gold);
+      font-size: 0.82rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 34px;
+      height: 1px;
+      background: var(--gold);
+      opacity: 0.8;
+    }
+
+    h1 {
+      margin: 0 0 26px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 500;
+      font-size: clamp(3rem, 7vw, 6.2rem);
+      line-height: 0.95;
+      letter-spacing: -0.07em;
+    }
+
+    h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2rem, 3.8vw, 3.2rem);
+      font-weight: 500;
+      letter-spacing: -0.045em;
+      line-height: 1.05;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 1.08rem;
+      letter-spacing: -0.015em;
+    }
+
+    .hero-text,
+    .section-intro,
+    p,
+    li {
+      color: var(--muted);
+    }
+
+    .hero-text {
+      max-width: 760px;
+      font-size: clamp(1.08rem, 1.6vw, 1.24rem);
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 34px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 18px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.035);
+      color: var(--text);
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: 0.18s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      text-decoration: none;
+      border-color: rgba(255, 255, 255, 0.22);
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: #070910;
+      border-color: transparent;
+    }
+
+    section {
+      padding: 76px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: 0.7fr 1.3fr;
+      gap: 40px;
+      align-items: start;
+      margin-bottom: 34px;
+    }
+
+    .section-intro {
+      font-size: 1.05rem;
+      margin: 0;
+      max-width: 790px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .two-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .card {
+      min-height: 100%;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 24px;
+      background: var(--panel);
+    }
+
+    .card:hover {
+      background: var(--panel-strong);
+    }
+
+    .wide {
+      grid-column: span 2;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .project-title {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+
+    .status {
+      color: var(--muted-2);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      white-space: nowrap;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 18px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      background: rgba(255,255,255,0.025);
+    }
+
+    .math-panel {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      overflow-x: auto;
+    }
+
+    .formula {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.08rem;
+      color: var(--text);
+      margin: 0;
+    }
+
+    .note {
+      border-left: 2px solid var(--gold);
+      padding-left: 18px;
+      color: var(--muted);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.18rem;
+      line-height: 1.5;
+    }
+
+    .proof-card {
+      position: relative;
+    }
+
+    .proof-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--gold);
+      background: rgba(255,255,255,0.035);
+      font-family: Georgia, "Times New Roman", serif;
+      margin-bottom: 14px;
+    }
+
+    .approach {
+      color: var(--gold);
+      font-size: 0.88rem;
+      margin-bottom: 12px;
+    }
+
+    .proof-card ol,
+    .proof-card ul {
+      margin: 14px 0 0;
+      padding-left: 20px;
+    }
+
+    .svg-card {
+      display: grid;
+      place-items: center;
+      min-height: 310px;
+      padding: 18px;
+      overflow: hidden;
+    }
+
+    .svg-card > svg {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .svg-label {
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      font-size: 13px;
+      fill: var(--text);
+    }
+
+    .svg-small {
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      font-size: 11px;
+      fill: var(--muted);
+    }
+
+    .circle-line {
+      stroke: var(--accent);
+      stroke-width: 4;
+      fill: rgba(183,201,255,0.08);
+    }
+
+    .straight-line {
+      stroke: var(--gold);
+      stroke-width: 4;
+      fill: none;
+      stroke-linecap: round;
+    }
+
+    .cut {
+      stroke: var(--red);
+      stroke-width: 4;
+      stroke-linecap: round;
+    }
+
+    .point {
+      fill: var(--gold);
+      stroke: var(--bg);
+      stroke-width: 2;
+    }
+
+    .point-blue {
+      fill: var(--accent);
+      stroke: var(--bg);
+      stroke-width: 2;
+    }
+
+    .dash {
+      stroke: var(--muted);
+      stroke-dasharray: 7 6;
+      stroke-width: 2;
+    }
+
+    footer {
+      padding: 34px 0 48px;
+      color: var(--muted-2);
+      font-size: 0.92rem;
+    }
+
+    .footer-grid {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 900px) {
+      nav {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 18px 0;
+      }
+
+      .hero-grid,
+      .section-head,
+      .two-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .wide {
+        grid-column: span 1;
+      }
+
+      .hero {
+        padding-top: 82px;
+      }
+    }
+  </style>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <nav>
+        <a class="brand" href="index.html#top">
+          <span class="brand-symbol">∫∂</span>
+          <span>Constantinos Gkogkotsis</span>
+        </a>
+
+        <div class="nav-links">
+          <a href="index.html#top">Home</a>
+          <a href="index.html#direction">Direction</a>
+          <a href="index.html#projects">Projects</a>
+          <a href="index.html#notes">Notes</a>
+          <a href="index.html#updates">Updates</a>
+          <a href="cv.html">CV</a>
+          <a href="index.html#contact">Contact</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow">Topology · Homeomorphisms · A small catastrophe</div>
+
+          <h1>Why the circle is not a line.</h1>
+
+          <p class="hero-text">
+            A GitHub-exclusive and eternally ongoing archive of proofs explaining why
+            the circle \(S^1\) is not homeomorphic to the real line \(\mathbb{R}\).
+          </p>
+
+          <p class="hero-text">
+            The project began from a very ordinary mathematical question asked under
+            very non-ordinary pressure: a room, a definition, a silence, and the
+            sudden feeling that topology itself had filed paperwork against me.
+          </p>
+
+          <div class="hero-actions">
+            <a class="btn primary" href="#proofs">Proof archive</a>
+            <a class="btn" href="#about">About the project</a>
+            <a class="btn" href="index.html#projects">Back to projects</a>
+          </div>
+        </div>
+
+        <aside class="card svg-card">
+          <svg viewBox="0 0 520 340" role="img" aria-label="Circle and line comparison">
+            <circle class="circle-line" cx="160" cy="165" r="78"></circle>
+            <line class="straight-line" x1="290" y1="165" x2="455" y2="165"></line>
+
+            <text class="svg-label" x="142" y="265">S¹</text>
+            <text class="svg-label" x="365" y="195">R</text>
+
+            <line class="dash" x1="245" y1="165" x2="285" y2="165"></line>
+            <text class="svg-small" x="226" y="135">not the same space</text>
+
+            <circle class="point" cx="160" cy="87" r="5"></circle>
+            <circle class="point-blue" cx="350" cy="165" r="5"></circle>
+          </svg>
+        </aside>
+      </div>
+    </section>
+
+    <section id="about">
+      <div class="container">
+        <div class="section-head">
+          <h2>About this page</h2>
+          <p class="section-intro">
+            This is not a course project. It is a personal mathematical archive:
+            a collection of different proofs, invariants, obstructions, and viewpoints
+            around one deceptively simple question.
+          </p>
+        </div>
+
+        <div class="two-grid">
+          <article class="card wide">
+            <div class="project-title">
+              <h3>The origin story</h3>
+              <span class="status">Kafkaesque topology</span>
+            </div>
+
+            <p>
+              At some point, I was asked why the circle is not a line. Under calm
+              circumstances, this is a friendly question. Under interview lighting,
+              it becomes a small bureaucratic nightmare: the definition of
+              homeomorphism waits at the desk, the inverse map asks for missing
+              documentation, and the mind discovers that it has arrived without the
+              correct form.
+            </p>
+
+            <p style="margin-top: 14px;">
+              The purpose of this page is not revenge against a question. It is more
+              dignified than that, but only slightly. It is a way of turning a failed
+              moment into a growing archive: whenever I find another way to see why
+              \(S^1\) is not \(\mathbb{R}\), I add it here.
+            </p>
+          </article>
+
+          <article class="card">
+            <h3>How to read it</h3>
+            <p>
+              Each proof begins with its approach: compactness, connectedness after
+              deletion, local structure, ends, fundamental group, or any other
+              invariant that exposes the obstruction.
+            </p>
+
+            <div class="tag-row">
+              <span class="tag">Topology</span>
+              <span class="tag">Homeomorphism</span>
+              <span class="tag">Invariants</span>
+              <span class="tag">Proof archive</span>
+            </div>
+          </article>
+        </div>
+
+        <p class="note" style="margin-top: 34px;">
+          The running rule is simple: every proof must explain not only that the circle
+          and the line are different, but what kind of mathematical difference is being
+          detected.
+        </p>
+      </div>
+    </section>
+
+    <section id="proofs">
+      <div class="container">
+        <div class="section-head">
+          <h2>Proof archive</h2>
+          <p class="section-intro">
+            Each entry starts with the approach at hand. The format is intentionally
+            modular: a new proof can be added later by copying one proof card and
+            changing the title, approach, and argument.
+          </p>
+        </div>
+
+        <div class="grid">
+
+          <article class="card proof-card wide">
+            <div class="proof-number">1</div>
+            <div class="project-title">
+              <h3>Compactness obstruction</h3>
+              <span class="status">Global topology</span>
+            </div>
+
+            <p class="approach">
+              Approach: compare a topological property preserved by homeomorphisms.
+            </p>
+
+            <p>
+              The circle \(S^1\) is compact as a closed and bounded subset of
+              \(\mathbb{R}^2\). The real line \(\mathbb{R}\) is not compact.
+            </p>
+
+            <div class="math-panel" style="margin-top: 16px;">
+              <p class="formula">\[
+                S^1=\{(x,y)\in\mathbb{R}^2:x^2+y^2=1\}.
+              \]</p>
+            </div>
+
+            <p style="margin-top: 16px;">
+              If there were a homeomorphism \(f:S^1\to\mathbb{R}\), then
+              \(\mathbb{R}\) would be the continuous image of a compact space, hence
+              compact. This is false. Therefore \(S^1\) is not homeomorphic to
+              \(\mathbb{R}\).
+            </p>
+          </article>
+
+          <article class="card svg-card">
+            <svg viewBox="0 0 420 310" role="img" aria-label="Compact circle and noncompact line">
+              <circle class="circle-line" cx="120" cy="150" r="62"></circle>
+              <line class="straight-line" x1="230" y1="150" x2="370" y2="150"></line>
+
+              <text class="svg-label" x="82" y="245">compact</text>
+              <text class="svg-label" x="250" y="245">not compact</text>
+              <text class="svg-small" x="78" y="45">compactness survives homeomorphism</text>
+            </svg>
+          </article>
+
+          <article class="card svg-card">
+            <svg viewBox="0 0 420 330" role="img" aria-label="Deleting points from circle and line">
+              <circle class="circle-line" cx="120" cy="140" r="64"></circle>
+              <line class="cut" x1="120" y1="75" x2="120" y2="88"></line>
+              <text class="svg-small" x="65" y="235">remove one point: still one piece</text>
+
+              <line class="straight-line" x1="230" y1="140" x2="285" y2="140"></line>
+              <line class="straight-line" x1="315" y1="140" x2="370" y2="140"></line>
+              <circle class="point" cx="300" cy="140" r="5"></circle>
+              <text class="svg-small" x="225" y="235">remove one point: two pieces</text>
+            </svg>
+          </article>
+
+          <article class="card proof-card wide">
+            <div class="proof-number">2</div>
+            <div class="project-title">
+              <h3>Removing one point</h3>
+              <span class="status">Connectedness</span>
+            </div>
+
+            <p class="approach">
+              Approach: delete one point and compare what remains.
+            </p>
+
+            <p>
+              If \(S^1\) and \(\mathbb{R}\) were homeomorphic, then deleting a point
+              from each corresponding space would produce homeomorphic remainders.
+            </p>
+
+            <p style="margin-top: 14px;">
+              But for any \(p\in S^1\), the space \(S^1\setminus\{p\}\) is connected;
+              in fact it is homeomorphic to an open interval. On the other hand, for
+              any \(q\in\mathbb{R}\), the space
+              \(\mathbb{R}\setminus\{q\}\) has two connected components:
+            </p>
+
+            <div class="math-panel" style="margin-top: 16px;">
+              <p class="formula">\[
+                \mathbb{R}\setminus\{q\}=(-\infty,q)\cup(q,\infty).
+              \]</p>
+            </div>
+
+            <p style="margin-top: 16px;">
+              Connectedness is preserved by homeomorphism. Therefore the two punctured
+              spaces cannot be homeomorphic, and hence \(S^1\not\cong\mathbb{R}\).
+            </p>
+          </article>
+
+          <article class="card proof-card full">
+            <div class="proof-number">3</div>
+            <div class="project-title">
+              <h3>Template for the next proof</h3>
+              <span class="status">Copy this card</span>
+            </div>
+
+            <p class="approach">
+              Approach: write the invariant, obstruction, or geometric viewpoint here.
+            </p>
+
+            <p>
+              State the mathematical property you want to compare. Then explain why
+              the property is preserved under homeomorphism. Finally, show that the
+              circle and the line do not share that property.
+            </p>
+
+            <div class="math-panel" style="margin-top: 16px;">
+              <p class="formula">\[
+                \text{homeomorphism} \quad \Longrightarrow \quad
+                \text{same topological invariant}.
+              \]</p>
+            </div>
+
+            <p style="margin-top: 16px;">
+              Replace this card when a new proof is ready, or duplicate it below and
+              change the number.
+            </p>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <section id="add">
+      <div class="container">
+        <div class="section-head">
+          <h2>How to add another proof</h2>
+          <p class="section-intro">
+            To extend the page, copy one proof card inside the proof archive grid,
+            change the number, title, status, approach, and argument. The page is
+            designed to grow without changing the global structure.
+          </p>
+        </div>
+
+        <article class="card full">
+          <div class="project-title">
+            <h3>Copy-paste block</h3>
+            <span class="status">Reusable structure</span>
+          </div>
+
+          <div class="math-panel">
+<pre style="white-space: pre-wrap; color: var(--muted); margin: 0; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.88rem;">&lt;article class="card proof-card wide"&gt;
+  &lt;div class="proof-number"&gt;NEW NUMBER&lt;/div&gt;
+  &lt;div class="project-title"&gt;
+    &lt;h3&gt;NEW PROOF TITLE&lt;/h3&gt;
+    &lt;span class="status"&gt;METHOD / INVARIANT&lt;/span&gt;
+  &lt;/div&gt;
+
+  &lt;p class="approach"&gt;
+    Approach: explain the point of view of this proof.
+  &lt;/p&gt;
+
+  &lt;p&gt;
+    Write the proof here.
+  &lt;/p&gt;
+&lt;/article&gt;</pre>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-grid">
+      <div>© 2026 Constantinos Gkogkotsis</div>
+      <div>Why the circle is not a line</div>
+    </div>
+  </footer>
+
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      document.body.classList.add("page-ready");
+    });
+
+    window.addEventListener("pageshow", () => {
+      document.body.classList.remove("page-leaving");
+      document.body.classList.add("page-ready");
+    });
+
+    document.querySelectorAll("a[href]").forEach(link => {
+      link.addEventListener("click", event => {
+        const href = link.getAttribute("href");
+
+        if (!href) return;
+
+        const opensNewTab = link.target === "_blank";
+        const isEmail = href.startsWith("mailto:");
+        const isPhone = href.startsWith("tel:");
+        const isExternal = href.startsWith("http");
+
+        if (opensNewTab || isEmail || isPhone || isExternal) {
+          return;
+        }
+
+        const currentUrl = new URL(window.location.href);
+        const targetUrl = new URL(href, window.location.href);
+
+        const normalizePath = path => {
+          if (path === "/" || path.endsWith("/")) return "/index.html";
+          return path;
+        };
+
+        const samePage =
+          normalizePath(currentUrl.pathname) === normalizePath(targetUrl.pathname);
+
+        if (samePage) {
+          event.preventDefault();
+
+          if (targetUrl.hash) {
+            const target = document.querySelector(targetUrl.hash);
+
+            if (target) {
+              target.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+              });
+
+              history.pushState(null, "", targetUrl.hash);
+            }
+
+            return;
+          }
+
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+          });
+
+          return;
+        }
+
+        event.preventDefault();
+
+        document.body.classList.remove("page-ready");
+        document.body.classList.add("page-leaving");
+
+        setTimeout(() => {
+          window.location.href = href;
+        }, 420);
+      });
+    });
+  </script>
+</body>
+</html>
