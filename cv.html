@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>CV | Constantinos Gkogkotsis</title>
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
   <style>
     :root {
       --bg: #080a0f;
@@ -41,6 +42,26 @@
         linear-gradient(180deg, #080a0f 0%, #0b0e14 45%, #080a0f 100%);
       color: var(--text);
       line-height: 1.65;
+
+      opacity: 0;
+      transform: translateY(10px);
+      filter: blur(4px);
+      transition:
+        opacity 420ms ease,
+        transform 420ms ease,
+        filter 420ms ease;
+    }
+
+    body.page-ready {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+
+    body.page-leaving {
+      opacity: 0;
+      transform: translateY(-10px);
+      filter: blur(4px);
     }
 
     a {
@@ -348,25 +369,25 @@
 
 <body>
   <header>
-  <div class="container">
-    <nav>
-      <a class="brand" href="index.html">
-        <span class="brand-symbol">∫∂</span>
-        <span>Constantinos Gkogkotsis</span>
-      </a>
+    <div class="container">
+      <nav>
+        <a class="brand" href="index.html">
+          <span class="brand-symbol">∫∂</span>
+          <span>Constantinos Gkogkotsis</span>
+        </a>
 
-      <div class="nav-links">
-        <a href="index.html">Home</a>
-        <a href="index.html#direction">Direction</a>
-        <a href="index.html#projects">Projects</a>
-        <a href="index.html#notes">Notes</a>
-        <a href="index.html#updates">Updates</a>
-        <a href="cv.html">CV</a>
-        <a href="index.html#contact">Contact</a>
-      </div>
-    </nav>
-  </div>
-</header>
+        <div class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="index.html#direction">Direction</a>
+          <a href="index.html#projects">Projects</a>
+          <a href="index.html#notes">Notes</a>
+          <a href="index.html#updates">Updates</a>
+          <a href="cv.html">CV</a>
+          <a href="index.html#contact">Contact</a>
+        </div>
+      </nav>
+    </div>
+  </header>
 
   <main>
     <div class="container">
@@ -607,5 +628,79 @@
       <div>Curriculum Vitae</div>
     </div>
   </footer>
+
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      document.body.classList.add("page-ready");
+    });
+
+    window.addEventListener("pageshow", () => {
+      document.body.classList.remove("page-leaving");
+      document.body.classList.add("page-ready");
+    });
+
+    document.querySelectorAll("a[href]").forEach(link => {
+      link.addEventListener("click", event => {
+        const href = link.getAttribute("href");
+
+        if (!href) return;
+
+        const opensNewTab = link.target === "_blank";
+        const isEmail = href.startsWith("mailto:");
+        const isPhone = href.startsWith("tel:");
+        const isExternal = href.startsWith("http");
+
+        if (opensNewTab || isEmail || isPhone || isExternal) {
+          return;
+        }
+
+        const currentUrl = new URL(window.location.href);
+        const targetUrl = new URL(href, window.location.href);
+
+        const normalizePath = path => {
+          if (path === "/" || path.endsWith("/")) return "/index.html";
+          return path;
+        };
+
+        const samePage =
+          normalizePath(currentUrl.pathname) === normalizePath(targetUrl.pathname);
+
+        if (samePage) {
+          event.preventDefault();
+
+          if (targetUrl.hash) {
+            const target = document.querySelector(targetUrl.hash);
+
+            if (target) {
+              target.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+              });
+
+              history.pushState(null, "", targetUrl.hash);
+            }
+
+            return;
+          }
+
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+          });
+
+          return;
+        }
+
+        event.preventDefault();
+
+        document.body.classList.remove("page-ready");
+        document.body.classList.add("page-leaving");
+
+        setTimeout(() => {
+          window.location.href = href;
+        }, 420);
+      });
+    });
+  </script>
 </body>
 </html>
