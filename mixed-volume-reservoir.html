@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Mixed Volume Reservoir · Constantinos Gkogkotsis</title>
+
+  <meta
+    name="description"
+    content="A working inventory of material around mixed volumes, sparse polynomial systems, computational algebra, papers, explainers, and Julia experiments."
+  />
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [["\\(", "\\)"], ["$", "$"]],
+        displayMath: [["\\[", "\\]"]]
+      },
+      svg: {
+        fontCache: "global"
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+  <style>
+    :root {
+      --bg: #050608;
+      --bg-soft: #090b10;
+      --panel: rgba(255, 255, 255, 0.045);
+      --panel-strong: rgba(255, 255, 255, 0.075);
+      --line: rgba(255, 255, 255, 0.12);
+      --line-soft: rgba(255, 255, 255, 0.075);
+      --text: #e7e2d8;
+      --muted: #a9a397;
+      --faint: #746f66;
+      --accent: #d8b56d;
+      --accent-soft: rgba(216, 181, 109, 0.13);
+      --accent-line: rgba(216, 181, 109, 0.35);
+      --blue-soft: rgba(120, 150, 190, 0.12);
+      --green-soft: rgba(126, 169, 132, 0.11);
+      --red-soft: rgba(190, 120, 120, 0.10);
+      --max: 1160px;
+      --radius: 22px;
+      --shadow: 0 26px 70px rgba(0, 0, 0, 0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 18% 0%, rgba(216, 181, 109, 0.10), transparent 32%),
+        radial-gradient(circle at 80% 12%, rgba(120, 150, 190, 0.10), transparent 34%),
+        linear-gradient(180deg, #050608 0%, #080910 48%, #050608 100%);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.65;
+      opacity: 0;
+      transform: translateY(10px);
+      filter: blur(4px);
+      transition:
+        opacity 420ms ease,
+        transform 420ms ease,
+        filter 420ms ease;
+    }
+
+    body.page-ready {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+
+    body.page-leaving {
+      opacity: 0;
+      transform: translateY(-8px);
+      filter: blur(4px);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: var(--accent);
+    }
+
+    p {
+      margin: 0;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(18px);
+      background: rgba(5, 6, 8, 0.78);
+      border-bottom: 1px solid var(--line-soft);
+    }
+
+    .nav {
+      width: min(var(--max), calc(100% - 40px));
+      margin: 0 auto;
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 28px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 650;
+      letter-spacing: 0.02em;
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--accent-line);
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      color: var(--accent);
+      background: var(--accent-soft);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 19px;
+    }
+
+    .brand-text {
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .nav-links a {
+      transition: color 180ms ease;
+    }
+
+    .nav-links a[aria-current="page"] {
+      color: var(--accent);
+    }
+
+    main {
+      width: min(var(--max), calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .hero {
+      padding: 86px 0 66px;
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 38px;
+      align-items: center;
+      min-height: calc(100vh - 72px);
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.78rem;
+      margin-bottom: 18px;
+    }
+
+    h1, h2, h3 {
+      margin: 0;
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+    }
+
+    h1 {
+      font-size: clamp(3rem, 7vw, 6.8rem);
+      max-width: 900px;
+    }
+
+    h2 {
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      margin-bottom: 18px;
+    }
+
+    h3 {
+      font-size: 1.12rem;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-text {
+      margin-top: 28px;
+      max-width: 760px;
+      color: var(--muted);
+      font-size: clamp(1.03rem, 1.6vw, 1.2rem);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 34px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 18px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.035);
+      transition:
+        border-color 180ms ease,
+        background 180ms ease,
+        color 180ms ease,
+        transform 180ms ease;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+      border-color: var(--accent-line);
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .button.primary {
+      border-color: var(--accent-line);
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .hero-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.065), rgba(255,255,255,0.025)),
+        rgba(255, 255, 255, 0.035);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .reservoir-visual {
+      padding: 28px;
+      border-bottom: 1px solid var(--line-soft);
+    }
+
+    .reservoir-svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .hero-card-body {
+      padding: 24px;
+    }
+
+    .small-label {
+      color: var(--accent);
+      font-size: 0.76rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .hero-card-body p {
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    section {
+      padding: 76px 0;
+      border-top: 1px solid var(--line-soft);
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: 0.82fr 1.18fr;
+      gap: 38px;
+      align-items: start;
+      margin-bottom: 30px;
+    }
+
+    .section-intro {
+      color: var(--muted);
+      font-size: 1.02rem;
+      max-width: 780px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid.four {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--panel);
+      padding: 22px;
+      min-height: 100%;
+      transition:
+        transform 180ms ease,
+        border-color 180ms ease,
+        background 180ms ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent-line);
+      background: var(--panel-strong);
+    }
+
+    .card p {
+      color: var(--muted);
+      margin-top: 12px;
+      font-size: 0.96rem;
+    }
+
+    .card.wide {
+      grid-column: span 2;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--accent);
+      background: var(--accent-soft);
+      border: 1px solid var(--accent-line);
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 15px;
+    }
+
+    .status.blue {
+      color: #b9c8e0;
+      background: var(--blue-soft);
+      border-color: rgba(120, 150, 190, 0.28);
+    }
+
+    .status.green {
+      color: #c2d8c4;
+      background: var(--green-soft);
+      border-color: rgba(126, 169, 132, 0.28);
+    }
+
+    .status.red {
+      color: #e0b9b9;
+      background: var(--red-soft);
+      border-color: rgba(190, 120, 120, 0.25);
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .pill {
+      border: 1px solid var(--line-soft);
+      border-radius: 999px;
+      padding: 5px 10px;
+      color: var(--faint);
+      font-size: 0.78rem;
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    .soft-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent);
+      margin-top: 18px;
+      font-size: 0.92rem;
+    }
+
+    .soft-link::after {
+      content: "→";
+      transform: translateY(-1px);
+    }
+
+    .muted-link {
+      color: var(--faint);
+      margin-top: 18px;
+      display: inline-block;
+      font-size: 0.9rem;
+    }
+
+    .inventory-map {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .map-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 245px;
+    }
+
+    .map-number {
+      position: absolute;
+      right: 20px;
+      top: 14px;
+      color: rgba(255, 255, 255, 0.055);
+      font-size: 4.8rem;
+      line-height: 1;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    .shelf {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    .shelf-row {
+      display: grid;
+      grid-template-columns: 0.35fr 1fr 0.34fr;
+      gap: 18px;
+      padding: 22px;
+      border-top: 1px solid var(--line-soft);
+      align-items: start;
+    }
+
+    .shelf-row:first-child {
+      border-top: 0;
+    }
+
+    .shelf-kicker {
+      color: var(--accent);
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+    }
+
+    .shelf-title {
+      font-weight: 650;
+      color: var(--text);
+    }
+
+    .shelf-desc {
+      color: var(--muted);
+      margin-top: 6px;
+      font-size: 0.95rem;
+    }
+
+    .shelf-action {
+      justify-self: end;
+      color: var(--faint);
+      font-size: 0.88rem;
+      text-align: right;
+    }
+
+    .shelf-action a {
+      color: var(--accent);
+    }
+
+    .timeline {
+      display: grid;
+      gap: 14px;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 18px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--panel);
+    }
+
+    .timeline-phase {
+      color: var(--accent);
+      font-size: 0.74rem;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .timeline-item p {
+      color: var(--muted);
+      margin-top: 6px;
+      font-size: 0.96rem;
+    }
+
+    .note {
+      margin-top: 34px;
+      color: var(--faint);
+      font-size: 0.92rem;
+      border-left: 1px solid var(--accent-line);
+      padding-left: 18px;
+    }
+
+    footer {
+      width: min(var(--max), calc(100% - 40px));
+      margin: 0 auto;
+      padding: 44px 0 60px;
+      border-top: 1px solid var(--line-soft);
+      color: var(--faint);
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+      font-size: 0.9rem;
+    }
+
+    footer a {
+      color: var(--muted);
+    }
+
+    footer a:hover {
+      color: var(--accent);
+    }
+
+    @media (max-width: 960px) {
+      .hero,
+      .section-head {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        min-height: auto;
+        padding-top: 62px;
+      }
+
+      .grid.three,
+      .grid.four,
+      .inventory-map {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .shelf-row {
+        grid-template-columns: 1fr;
+      }
+
+      .shelf-action {
+        justify-self: start;
+        text-align: left;
+      }
+
+      .card.wide {
+        grid-column: span 1;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .nav {
+        min-height: auto;
+        padding: 18px 0;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .nav-links {
+        flex-wrap: wrap;
+        gap: 12px 16px;
+      }
+
+      main {
+        width: min(100% - 28px, var(--max));
+      }
+
+      footer {
+        width: min(100% - 28px, var(--max));
+      }
+
+      .grid.two,
+      .grid.three,
+      .grid.four,
+      .inventory-map {
+        grid-template-columns: 1fr;
+      }
+
+      section {
+        padding: 56px 0;
+      }
+
+      .timeline-item {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body id="top">
+  <header class="site-header">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand internal-link" href="index.html#top" aria-label="Go to homepage">
+        <span class="brand-mark">∫∂</span>
+        <span class="brand-text">Constantinos Gkogkotsis</span>
+      </a>
+
+      <div class="nav-links">
+        <a class="internal-link" href="index.html#top">Home</a>
+        <a class="internal-link" href="index.html#direction">Direction</a>
+        <a class="internal-link" href="index.html#projects" aria-current="page">Projects</a>
+        <a class="internal-link" href="index.html#notes">Notes</a>
+        <a class="internal-link" href="index.html#updates">Updates</a>
+        <a class="internal-link" href="cv.html">CV</a>
+        <a class="internal-link" href="index.html#contact">Contact</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <div class="eyebrow">Computational algebra · Mixed volumes · Sparse systems</div>
+
+        <h1 id="page-title">Mixed Volume Reservoir.</h1>
+
+        <p class="hero-text">
+          A working inventory for my study of mixed volumes, sparse polynomial systems,
+          and the computational algebra surrounding them. This is not a single finished
+          project, but a structured place where concepts, papers, code experiments, and
+          future project pages are collected.
+        </p>
+
+        <div class="hero-actions">
+          <a class="button primary internal-link" href="#inventory">Enter the inventory</a>
+          <a class="button internal-link" href="#papers">Paper shelf</a>
+          <a class="button internal-link" href="#julia">Julia laboratory</a>
+        </div>
+      </div>
+
+      <aside class="hero-card" aria-label="Reservoir visual">
+        <div class="reservoir-visual">
+          <svg class="reservoir-svg" viewBox="0 0 560 420" role="img" aria-label="A schematic inventory of polytopes, papers, code, and project corridors">
+            <defs>
+              <linearGradient id="goldLine" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="rgba(216,181,109,0.95)" />
+                <stop offset="100%" stop-color="rgba(216,181,109,0.18)" />
+              </linearGradient>
+              <filter id="softGlow">
+                <feGaussianBlur stdDeviation="3.5" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+
+            <rect x="28" y="34" width="504" height="352" rx="28" fill="rgba(255,255,255,0.035)" stroke="rgba(255,255,255,0.12)" />
+            <line x1="78" y1="126" x2="482" y2="126" stroke="rgba(255,255,255,0.13)" />
+            <line x1="78" y1="216" x2="482" y2="216" stroke="rgba(255,255,255,0.13)" />
+            <line x1="78" y1="306" x2="482" y2="306" stroke="rgba(255,255,255,0.13)" />
+
+            <polygon points="112,92 151,68 194,89 177,114 132,118" fill="rgba(216,181,109,0.13)" stroke="url(#goldLine)" />
+            <polygon points="238,84 284,62 325,88 305,116 254,112" fill="rgba(120,150,190,0.12)" stroke="rgba(120,150,190,0.55)" />
+            <polygon points="378,91 417,65 458,92 445,117 395,116" fill="rgba(126,169,132,0.12)" stroke="rgba(126,169,132,0.55)" />
+
+            <rect x="106" y="158" width="94" height="34" rx="10" fill="rgba(255,255,255,0.055)" stroke="rgba(255,255,255,0.13)" />
+            <rect x="234" y="158" width="94" height="34" rx="10" fill="rgba(255,255,255,0.055)" stroke="rgba(255,255,255,0.13)" />
+            <rect x="362" y="158" width="94" height="34" rx="10" fill="rgba(255,255,255,0.055)" stroke="rgba(255,255,255,0.13)" />
+
+            <text x="124" y="181" fill="rgba(231,226,216,0.78)" font-size="15" font-family="Georgia, serif">papers</text>
+            <text x="261" y="181" fill="rgba(231,226,216,0.78)" font-size="15" font-family="Georgia, serif">code</text>
+            <text x="384" y="181" fill="rgba(231,226,216,0.78)" font-size="15" font-family="Georgia, serif">notes</text>
+
+            <circle cx="151" cy="262" r="25" fill="rgba(216,181,109,0.11)" stroke="rgba(216,181,109,0.55)" />
+            <circle cx="281" cy="262" r="25" fill="rgba(216,181,109,0.11)" stroke="rgba(216,181,109,0.55)" />
+            <circle cx="411" cy="262" r="25" fill="rgba(216,181,109,0.11)" stroke="rgba(216,181,109,0.55)" />
+
+            <path d="M176 262 C214 238, 242 238, 256 262" fill="none" stroke="rgba(216,181,109,0.38)" />
+            <path d="M306 262 C344 238, 372 238, 386 262" fill="none" stroke="rgba(216,181,109,0.38)" />
+
+            <text x="140" y="267" fill="rgba(231,226,216,0.78)" font-size="18" font-family="Georgia, serif">A</text>
+            <text x="270" y="267" fill="rgba(231,226,216,0.78)" font-size="18" font-family="Georgia, serif">B</text>
+            <text x="400" y="267" fill="rgba(231,226,216,0.78)" font-size="18" font-family="Georgia, serif">C</text>
+
+            <text x="118" y="356" fill="rgba(216,181,109,0.85)" font-size="34" font-family="Georgia, serif" filter="url(#softGlow)">MV</text>
+            <text x="180" y="352" fill="rgba(231,226,216,0.62)" font-size="15" font-family="Inter, sans-serif">concepts → papers → computations → projects</text>
+          </svg>
+        </div>
+
+        <div class="hero-card-body">
+          <div class="small-label">Working archive</div>
+          <p>
+            The reservoir is meant to grow: each shelf can later become a separate
+            explainer, code note, paper page, or research log.
+          </p>
+        </div>
+      </aside>
+    </section>
+
+    <section id="about" aria-labelledby="about-title">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">What this page is</div>
+          <h2 id="about-title">A mathematical inventory, not a single endpoint.</h2>
+        </div>
+
+        <p class="section-intro">
+          This page collects the raw material of a developing direction. Its purpose is
+          to keep together the convex-geometric language of Newton polytopes, the
+          algebraic language of sparse polynomial systems, the algorithmic language of
+          mixed volume computation, and the computational experiments that make the
+          subject concrete.
+        </p>
+      </div>
+
+      <div class="grid three">
+        <article class="card">
+          <span class="status">Reservoir</span>
+          <h3>Organized accumulation</h3>
+          <p>
+            The page records concepts, papers, examples, code fragments, and future
+            project branches before they become polished standalone articles.
+          </p>
+        </article>
+
+        <article class="card">
+          <span class="status blue">Bridge</span>
+          <h3>Geometry to algebra</h3>
+          <p>
+            Mixed volume is treated as a bridge between convex geometry and the
+            structure of polynomial systems with sparse support.
+          </p>
+        </article>
+
+        <article class="card">
+          <span class="status green">Laboratory</span>
+          <h3>Computation as clarification</h3>
+          <p>
+            Julia experiments will be used to test small examples, encode polytopes,
+            and make algorithmic constructions visible.
+          </p>
+        </article>
+      </div>
+
+      <p class="note">
+        The reservoir is intentionally incomplete. Its value is that unfinished material
+        remains visible, organized, and ready to be expanded into separate pages.
+      </p>
+    </section>
+
+    <section id="inventory" aria-labelledby="inventory-title">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Inventory map</div>
+          <h2 id="inventory-title">Four shelves of the same project.</h2>
+        </div>
+
+        <p class="section-intro">
+          The reservoir is divided into shelves. Each shelf contains a different kind of
+          material: conceptual explanations, papers, code experiments, and project
+          corridors that can later become independent pages.
+        </p>
+      </div>
+
+      <div class="inventory-map">
+        <article class="card map-card">
+          <div class="map-number">01</div>
+          <span class="status">Concepts</span>
+          <h3>Concept shelf</h3>
+          <p>
+            Short explanations of the basic objects: supports, Newton polytopes,
+            Minkowski sums, mixed volume, Bernstein's theorem, sparse resultants, and
+            separation bounds.
+          </p>
+          <a class="soft-link internal-link" href="#concepts">Open concept shelf</a>
+        </article>
+
+        <article class="card map-card">
+          <div class="map-number">02</div>
+          <span class="status blue">Papers</span>
+          <h3>Paper shelf</h3>
+          <p>
+            A reading inventory of papers and notes that support the direction. Some
+            will remain references; others will branch into project pages like the DMM
+            Bound.
+          </p>
+          <a class="soft-link internal-link" href="#papers">Open paper shelf</a>
+        </article>
+
+        <article class="card map-card">
+          <div class="map-number">03</div>
+          <span class="status green">Code</span>
+          <h3>Julia laboratory</h3>
+          <p>
+            A place for small computational experiments: representing polytopes,
+            checking examples, computing simple mixed volumes, and testing algorithmic
+            ideas.
+          </p>
+          <a class="soft-link internal-link" href="#julia">Open laboratory</a>
+        </article>
+
+        <article class="card map-card">
+          <div class="map-number">04</div>
+          <span class="status red">Projects</span>
+          <h3>Project corridors</h3>
+          <p>
+            The outward-facing branches of the reservoir: polished pages, undergraduate
+            translations, implementation projects, and future research notes.
+          </p>
+          <a class="soft-link internal-link" href="#corridors">Open corridors</a>
+        </article>
+      </div>
+    </section>
+
+    <section id="concepts" aria-labelledby="concepts-title">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Concept shelf</div>
+          <h2 id="concepts-title">Objects to be made explicit.</h2>
+        </div>
+
+        <p class="section-intro">
+          This shelf will become a sequence of explainers. The aim is not merely to
+          define each object, but to show why it enters the study of sparse polynomial
+          systems and how it participates in computation.
+        </p>
+      </div>
+
+      <div class="grid three">
+        <article class="card">
+          <span class="status">Planned explainer</span>
+          <h3>Supports and Newton polytopes</h3>
+          <p>
+            The support of a polynomial records which monomials appear. Its convex hull
+            is the Newton polytope, turning algebraic sparsity into convex geometry.
+          </p>
+          <div class="meta-row">
+            <span class="pill">sparse polynomials</span>
+            <span class="pill">convex hulls</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <span class="status">Planned explainer</span>
+          <h3>Minkowski sums</h3>
+          <p>
+            The operation \(A+B=\{a+b:a\in A,\ b\in B\}\) is the natural addition of
+            convex bodies and prepares the ground for mixed volume.
+          </p>
+          <div class="meta-row">
+            <span class="pill">convex geometry</span>
+            <span class="pill">polytope arithmetic</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <span class="status">Core concept</span>
+          <h3>Mixed volume</h3>
+          <p>
+            Mixed volume is the coefficient hidden inside the volume polynomial of a
+            Minkowski combination. It measures how several polytopes interact.
+          </p>
+          <div class="meta-row">
+            <span class="pill">volume polynomial</span>
+            <span class="pill">BKK bound</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <span class="status blue">Theorem shelf</span>
+          <h3>Bernstein's theorem</h3>
+          <p>
+            The number of isolated solutions of a generic sparse system in the algebraic
+            torus is controlled by the mixed volume of the Newton polytopes.
+          </p>
+          <div class="meta-row">
+            <span class="pill">torus solutions</span>
+            <span class="pill">generic systems</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <span class="status blue">Algebraic bridge</span>
+          <h3>Sparse resultants</h3>
+          <p>
+            Resultants encode elimination. In the sparse setting, their structure is
+            governed by supports, Newton polytopes, and mixed-volume phenomena.
+          </p>
+          <div class="meta-row">
+            <span class="pill">elimination</span>
+            <span class="pill">resultants</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <span class="status red">Connection</span>
+          <h3>Separation bounds</h3>
+          <p>
+            Separation bounds estimate how close distinct solutions can be. This is
+            where the DMM direction enters the reservoir.
+          </p>
+          <div class="meta-row">
+            <span class="pill">DMM</span>
+            <span class="pill">root separation</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="papers" aria-labelledby="papers-title">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Paper shelf</div>
+          <h2 id="papers-title">References, routes, and future pages.</h2>
+        </div>
+
+        <p class="section-intro">
+          Some papers will be linked directly as references. Others will receive their
+          own project pages, where the main definitions, results, and methods are
+          translated into a more accessible mathematical narrative.
+        </p>
+      </div>
+
+      <div class="shelf">
+        <div class="shelf-row">
+          <div class="shelf-kicker">Active page</div>
+          <div>
+            <div class="shelf-title">The DMM Bound</div>
+            <div class="shelf-desc">
+              A project page on the passage from one-variable separation bounds to
+              sparse polynomial systems through projection, resultants, and mixed
+              volumes.
+            </div>
+          </div>
+          <div class="shelf-action">
+            <a class="internal-link" href="dmmbound.html">Open page</a>
+          </div>
+        </div>
+
+        <div class="shelf-row">
+          <div class="shelf-kicker">Reading route</div>
+          <div>
+            <div class="shelf-title">Canny–Emiris direction</div>
+            <div class="shelf-desc">
+              Material around mixed subdivision, exact mixed volume computation, and
+              algorithms connecting convex geometry with sparse polynomial solving.
+            </div>
+          </div>
+          <div class="shelf-action">
+            Paper link to be inserted
+          </div>
+        </div>
+
+        <div class="shelf-row">
+          <div class="shelf-kicker">Background</div>
+          <div>
+            <div class="shelf-title">Bernstein–Kushnirenko–Khovanskii theorem</div>
+            <div class="shelf-desc">
+              The conceptual backbone behind the use of mixed volume as a solution
+              count for generic sparse systems.
+            </div>
+          </div>
+          <div class="shelf-action">
+            Reference to be selected
+          </div>
+        </div>
+
+        <div class="shelf-row">
+          <div class="shelf-kicker">Future project</div>
+          <div>
+            <div class="shelf-title">Sparse resultants and elimination</div>
+            <div class="shelf-desc">
+              A possible future page on how elimination changes when polynomial systems
+              are treated through supports rather than only through total degree.
+            </div>
+          </div>
+          <div class="shelf-action">
+            Coming later
+          </div>
+        </div>
+
+        <div class="shelf-row">
+          <div class="shelf-kicker">Future project</div>
+          <div>
+            <div class="shelf-title">Undergraduate translation notes</div>
+            <div class="shelf-desc">
+              A planned layer of notes that follows selected papers while unpacking
+              each definition, theorem, and construction in accessible language.
+            </div>
+          </div>
+          <div class="shelf-action">
+            Coming later
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="julia" aria-labelledby="julia-title">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Julia laboratory</div>
+          <h2 id="julia-title">Code as a way of seeing.</h2>
+        </div>
+
+        <p class="section-intro">
+          This part of the reservoir is reserved for computational experiments. The goal
+          is not only to implement algorithms, but to use code as a microscope for small
+          examples: supports, polytopes, subdivisions, and mixed-volume computations.
+        </p>
+      </div>
+
+      <div class="grid two">
+        <article class="card">
+          <span class="status green">Laboratory note</span>
+          <h3>Polytopes as data</h3>
+          <p>
+            Represent finite supports, compute convex hulls when possible, and keep
+            small examples where the translation from monomials to geometry is visible.
+          </p>
+          <div class="meta-row">
+            <span class="pill">Julia</span>
+            <span class="pill">supports</span>
+            <span class="pill">Newton polytopes</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <span class="status green">Experiment</span>
+          <h3>Small mixed volume examples</h3>
+          <p>
+            Build examples in low dimension where the mixed volume can be computed by
+            hand and compared with a programmatic computation.
+          </p>
+          <div class="meta-row">
+            <span class="pill">dimension 2</span>
+            <span class="pill">sanity checks</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <span class="status green">Experiment</span>
+          <h3>Mixed subdivisions</h3>
+          <p>
+            Record the first experiments with subdivisions and the combinatorial objects
+            needed for exact mixed volume algorithms.
+          </p>
+          <div class="meta-row">
+            <span class="pill">subdivision</span>
+            <span class="pill">algorithmic geometry</span>
+          </div>
+        </article>
+
+        <article class="card">
+          <span class="status green">Future code page</span>
+          <h3>Implementation diary</h3>
+          <p>
+            A future page for keeping a clean record of design decisions, failed
+            attempts, corrected algorithms, examples, and reusable Julia fragments.
+          </p>
+          <div class="meta-row">
+            <span class="pill">research log</span>
+            <span class="pill">implementation</span>
+          </div>
+        </article>
+      </div>
+
+      <p class="note">
+        The laboratory should remain honest: small examples first, exact computations
+        when possible, and no claim of implementation maturity before the code earns it.
+      </p>
+    </section>
+
+    <section id="corridors" aria-labelledby="corridors-title">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Project corridors</div>
+          <h2 id="corridors-title">Where the reservoir branches outward.</h2>
+        </div>
+
+        <p class="section-intro">
+          The reservoir is the central room. The corridors are the future finished
+          pages: each one takes a piece of the inventory and turns it into a focused
+          mathematical project, explainer, or computational note.
+        </p>
+      </div>
+
+      <div class="grid two">
+        <article class="card wide">
+          <span class="status">Existing corridor</span>
+          <h3>The DMM Bound</h3>
+          <p>
+            A focused project page on separation bounds and their multivariate sparse
+            extension. This is the first serious branch of the reservoir.
+          </p>
+          <a class="soft-link internal-link" href="dmmbound.html">Open The DMM Bound</a>
+        </article>
+
+        <article class="card">
+          <span class="status red">Planned corridor</span>
+          <h3>Exact mixed volume computation</h3>
+          <p>
+            A future project page around algorithms for computing mixed volume exactly,
+            with emphasis on mixed subdivisions and implementable examples.
+          </p>
+          <span class="muted-link">Page not yet created</span>
+        </article>
+
+        <article class="card">
+          <span class="status red">Planned corridor</span>
+          <h3>Newton polytopes and sparse systems</h3>
+          <p>
+            A future explainer translating polynomial supports into convex-geometric
+            objects, with examples that can be computed by hand.
+          </p>
+          <span class="muted-link">Page not yet created</span>
+        </article>
+
+        <article class="card">
+          <span class="status red">Planned corridor</span>
+          <h3>Julia notes for computational algebra</h3>
+          <p>
+            A future code-oriented page for small Julia programs, examples, and
+            implementation fragments related to the reservoir.
+          </p>
+          <span class="muted-link">Page not yet created</span>
+        </article>
+      </div>
+    </section>
+
+    <section id="roadmap" aria-labelledby="roadmap-title">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Status</div>
+          <h2 id="roadmap-title">A reservoir under construction.</h2>
+        </div>
+
+        <p class="section-intro">
+          This page is meant to change as the direction becomes clearer. The current
+          stage is collection and orientation: mapping the objects, deciding which
+          papers deserve full treatment, and building small computational experiments.
+        </p>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-phase">Phase I</div>
+          <div>
+            <h3>Collect the objects</h3>
+            <p>
+              Stabilize the core vocabulary: supports, Newton polytopes, Minkowski sums,
+              mixed volume, sparse systems, resultants, and separation bounds.
+            </p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-phase">Phase II</div>
+          <div>
+            <h3>Build the paper shelf</h3>
+            <p>
+              Add exact links, reading notes, and short descriptions of the papers that
+              define the direction. Decide which papers deserve full project pages.
+            </p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-phase">Phase III</div>
+          <div>
+            <h3>Open the Julia laboratory</h3>
+            <p>
+              Start from minimal examples and slowly build toward exact mixed volume
+              computations, with every experiment tied to a mathematical explanation.
+            </p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-phase">Phase IV</div>
+          <div>
+            <h3>Branch into finished pages</h3>
+            <p>
+              Turn selected parts of the inventory into polished pages: explainers,
+              undergraduate translations, computational notes, and research-oriented
+              project pages.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <p class="note">
+        The reservoir should remain useful even before it is complete: a visible map of
+        the material already collected, the material being understood, and the material
+        waiting to become a separate project.
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    <div>© Constantinos Gkogkotsis</div>
+    <div>
+      <a class="internal-link" href="index.html#projects">Back to projects</a>
+      ·
+      <a class="internal-link" href="index.html#contact">Contact</a>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      function markReady() {
+        document.body.classList.remove("page-leaving");
+        document.body.classList.add("page-ready");
+      }
+
+      window.addEventListener("DOMContentLoaded", markReady);
+      window.addEventListener("pageshow", markReady);
+
+      function isModifiedClick(event) {
+        return event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0;
+      }
+
+      function samePageAnchor(link) {
+        if (!link.hash) return false;
+
+        const current = window.location.pathname.replace(/\/$/, "");
+        const target = new URL(link.href, window.location.href);
+        const targetPath = target.pathname.replace(/\/$/, "");
+
+        return current === targetPath && window.location.origin === target.origin;
+      }
+
+      document.addEventListener("click", function (event) {
+        const link = event.target.closest("a");
+        if (!link || isModifiedClick(event)) return;
+
+        const href = link.getAttribute("href");
+        if (!href || href.startsWith("mailto:") || href.startsWith("tel:") || link.target === "_blank") return;
+
+        const url = new URL(link.href, window.location.href);
+
+        if (samePageAnchor(link)) {
+          event.preventDefault();
+
+          const target = document.querySelector(url.hash);
+          if (target) {
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+            history.pushState(null, "", url.hash);
+          }
+
+          return;
+        }
+
+        if (url.origin === window.location.origin) {
+          event.preventDefault();
+          document.body.classList.remove("page-ready");
+          document.body.classList.add("page-leaving");
+
+          window.setTimeout(function () {
+            window.location.href = url.href;
+          }, 260);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
