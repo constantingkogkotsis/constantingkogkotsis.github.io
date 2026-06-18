@@ -840,14 +840,14 @@
     <div class="section-head">
       <div>
         <div class="eyebrow">Highlighted paper</div>
-        <h2>Efficient algorithms for sparse resultants and mixed volume.</h2>
+        <h2>Sparse resultants and mixed volume computation.</h2>
       </div>
 
-      <p class="section-intro">
-        A central reference for this reservoir is the paper by Ioannis Emiris and
-        John Canny on incremental algorithms for the sparse resultant and mixed
-        volume. It connects the convex geometry of Newton polytopes with concrete
-        algorithmic constructions used in sparse polynomial solving.
+      <p class="section-intro lowered">
+        This paper is one of the technical starting points for the reservoir. It studies
+        sparse polynomial systems through their monomial supports and Newton polytopes,
+        and uses that structure to build algorithms for sparse resultants and mixed
+        volume.
       </p>
     </div>
 
@@ -858,54 +858,46 @@
         <h3>Efficient Incremental Algorithms for the Sparse Resultant and the Mixed Volume</h3>
 
         <p>
-          The paper studies how sparse polynomial systems can be treated through
-          their supports rather than through total degree alone. Its main objects
-          are the sparse resultant, Newton polytopes, mixed volume, and the
-          construction of resultant matrices whose size reflects the sparse
-          structure of the system.
+          The point of the paper is not only to define mixed volume, but to make it
+          computational. Instead of treating a polynomial system only through its total
+          degrees, the paper uses the monomials that actually occur. Those supports
+          determine Newton polytopes, and the geometry of these polytopes guides the
+          construction of smaller sparse resultant matrices.
         </p>
 
         <p>
-          For the reservoir, this paper is useful because it gives both a conceptual
-          bridge and an algorithmic route: from supports to Newton polytopes, from
-          Newton polytopes to mixed volume, and from mixed volume to matrices and
-          sparse resultants.
+          This is why the paper belongs here: it sits exactly at the intersection I want
+          to understand better — sparse algebra, convex geometry, elimination, and
+          implementable algorithms. A full explainer page will later unpack the paper
+          step by step.
         </p>
 
         <div class="algorithm-steps">
           <div class="algorithm-step">
             <span>1</span>
-            <div>Start from the supports of the input polynomials.</div>
+            <div>Read the system through the supports of its polynomials.</div>
           </div>
 
           <div class="algorithm-step">
             <span>2</span>
-            <div>Form the corresponding Newton polytopes.</div>
+            <div>Pass from supports to Newton polytopes and their mixed geometry.</div>
           </div>
 
           <div class="algorithm-step">
             <span>3</span>
-            <div>Use lifting and pruning ideas to identify the relevant mixed cells.</div>
+            <div>Use lifting and pruning to locate the relevant mixed cells.</div>
           </div>
 
           <div class="algorithm-step">
             <span>4</span>
-            <div>Use the resulting combinatorial data in sparse resultant construction.</div>
+            <div>Use this data to construct sparse resultant matrices.</div>
           </div>
-        </div>
-
-        <div class="paper-meta">
-          <span>Sparse resultants</span>
-          <span>Mixed volume</span>
-          <span>Newton polytopes</span>
-          <span>Incremental algorithms</span>
-          <span>Future explainer</span>
         </div>
 
         <a class="soft-link" href="canny-emiris.html">Open future explainer</a>
       </div>
 
-      <div class="paper-feature-visual" aria-label="Algorithmic flow from supports to resultant matrix">
+      <div class="paper-feature-visual" aria-label="Sparse resultant and mixed volume workflow">
         <svg viewBox="0 0 560 420" role="img">
           <defs>
             <marker id="paperArrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
@@ -913,72 +905,97 @@
             </marker>
           </defs>
 
-          <rect x="28" y="34" width="504" height="352" rx="28" fill="rgba(255,255,255,0.035)" stroke="rgba(255,255,255,0.12)" />
+          <rect x="32" y="34" width="496" height="352" rx="28"
+            fill="rgba(255,255,255,0.035)"
+            stroke="rgba(255,255,255,0.12)" />
 
-          <text x="70" y="76" fill="rgba(215,197,143,0.9)" font-size="15" font-family="Inter, sans-serif" letter-spacing="2">
-            SUPPORTS
+          <rect x="72" y="72" width="170" height="72" rx="18"
+            fill="rgba(216,181,109,0.10)"
+            stroke="rgba(216,181,109,0.42)" />
+
+          <text x="98" y="104" fill="rgba(242,242,240,0.86)" font-size="15" font-family="Inter, sans-serif">
+            polynomial supports
+          </text>
+          <text x="112" y="126" fill="rgba(242,242,240,0.52)" font-size="12" font-family="Inter, sans-serif">
+            monomials that occur
           </text>
 
-          <circle cx="92" cy="118" r="5" fill="#d7c58f" />
-          <circle cx="128" cy="98" r="5" fill="#d7c58f" />
-          <circle cx="166" cy="128" r="5" fill="#d7c58f" />
-          <circle cx="128" cy="154" r="5" fill="#d7c58f" />
+          <rect x="318" y="72" width="170" height="72" rx="18"
+            fill="rgba(183,201,255,0.09)"
+            stroke="rgba(183,201,255,0.36)" />
 
-          <circle cx="92" cy="228" r="5" fill="#b7c9ff" />
-          <circle cx="146" cy="204" r="5" fill="#b7c9ff" />
-          <circle cx="180" cy="250" r="5" fill="#b7c9ff" />
-          <circle cx="116" cy="270" r="5" fill="#b7c9ff" />
-
-          <path d="M205 188 L270 188" stroke="#d7c58f" stroke-width="3" fill="none" marker-end="url(#paperArrow)" />
-
-          <text x="303" y="76" fill="rgba(215,197,143,0.9)" font-size="15" font-family="Inter, sans-serif" letter-spacing="2">
-            NEWTON POLYTOPES
+          <text x="350" y="104" fill="rgba(242,242,240,0.86)" font-size="15" font-family="Inter, sans-serif">
+            Newton polytopes
+          </text>
+          <text x="359" y="126" fill="rgba(242,242,240,0.52)" font-size="12" font-family="Inter, sans-serif">
+            convex geometry
           </text>
 
-          <polygon points="318,128 356,88 420,106 448,162 382,182 332,158"
-            fill="rgba(216,181,109,0.13)" stroke="#d7c58f" stroke-width="2" />
+          <path d="M242 108 L318 108"
+            stroke="#d7c58f"
+            stroke-width="3"
+            fill="none"
+            marker-end="url(#paperArrow)" />
 
-          <polygon points="318,258 374,214 452,234 426,296 348,306"
-            fill="rgba(183,201,255,0.11)" stroke="#b7c9ff" stroke-width="2" />
+          <rect x="72" y="230" width="170" height="72" rx="18"
+            fill="rgba(126,169,132,0.10)"
+            stroke="rgba(126,169,132,0.36)" />
 
-          <path d="M280 300 C280 340, 310 354, 350 354 L438 354"
-            stroke="#d7c58f" stroke-width="3" fill="none" marker-end="url(#paperArrow)" />
-
-          <text x="72" y="348" fill="rgba(215,197,143,0.9)" font-size="15" font-family="Inter, sans-serif" letter-spacing="2">
-            LIFT + PRUNE
+          <text x="113" y="262" fill="rgba(242,242,240,0.86)" font-size="15" font-family="Inter, sans-serif">
+            mixed cells
+          </text>
+          <text x="109" y="284" fill="rgba(242,242,240,0.52)" font-size="12" font-family="Inter, sans-serif">
+            lift and prune
           </text>
 
-          <path d="M80 320 C110 292, 142 292, 170 320" stroke="rgba(215,197,143,0.65)" stroke-width="2" fill="none" />
-          <path d="M92 336 C122 306, 158 306, 192 336" stroke="rgba(183,201,255,0.55)" stroke-width="2" fill="none" />
-          <circle cx="96" cy="320" r="6" fill="rgba(216,181,109,0.2)" stroke="#d7c58f" />
-          <circle cx="148" cy="309" r="6" fill="rgba(216,181,109,0.2)" stroke="#d7c58f" />
-          <circle cx="188" cy="336" r="6" fill="rgba(183,201,255,0.18)" stroke="#b7c9ff" />
+          <rect x="318" y="230" width="170" height="72" rx="18"
+            fill="rgba(255,255,255,0.045)"
+            stroke="rgba(255,255,255,0.18)" />
 
-          <rect x="352" y="324" width="112" height="58" rx="14"
-            fill="rgba(255,255,255,0.045)" stroke="rgba(255,255,255,0.18)" />
-
-          <text x="376" y="348" fill="rgba(242,242,240,0.82)" font-size="14" font-family="Inter, sans-serif">
-            resultant
+          <text x="354" y="262" fill="rgba(242,242,240,0.86)" font-size="15" font-family="Inter, sans-serif">
+            resultant matrix
+          </text>
+          <text x="365" y="284" fill="rgba(242,242,240,0.52)" font-size="12" font-family="Inter, sans-serif">
+            sparse construction
           </text>
 
-          <text x="386" y="368" fill="rgba(242,242,240,0.62)" font-size="13" font-family="Inter, sans-serif">
-            matrix
-          </text>
+          <path d="M403 144 C403 180, 157 190, 157 230"
+            stroke="#d7c58f"
+            stroke-width="3"
+            fill="none"
+            marker-end="url(#paperArrow)" />
 
-          <line x1="368" y1="336" x2="448" y2="336" stroke="rgba(255,255,255,0.12)" />
-          <line x1="368" y1="350" x2="448" y2="350" stroke="rgba(255,255,255,0.12)" />
-          <line x1="368" y1="364" x2="448" y2="364" stroke="rgba(255,255,255,0.12)" />
-          <line x1="388" y1="330" x2="388" y2="376" stroke="rgba(255,255,255,0.12)" />
-          <line x1="418" y1="330" x2="418" y2="376" stroke="rgba(255,255,255,0.12)" />
+          <path d="M242 266 L318 266"
+            stroke="#d7c58f"
+            stroke-width="3"
+            fill="none"
+            marker-end="url(#paperArrow)" />
+
+          <polygon points="100,184 137,164 178,176 166,205 119,207"
+            fill="rgba(216,181,109,0.12)"
+            stroke="rgba(216,181,109,0.55)"
+            stroke-width="2" />
+
+          <polygon points="346,170 397,154 450,178 424,208 366,202"
+            fill="rgba(183,201,255,0.10)"
+            stroke="rgba(183,201,255,0.48)"
+            stroke-width="2" />
+
+          <line x1="372" y1="332" x2="448" y2="332" stroke="rgba(255,255,255,0.12)" />
+          <line x1="372" y1="346" x2="448" y2="346" stroke="rgba(255,255,255,0.12)" />
+          <line x1="372" y1="360" x2="448" y2="360" stroke="rgba(255,255,255,0.12)" />
+          <line x1="392" y1="322" x2="392" y2="370" stroke="rgba(255,255,255,0.12)" />
+          <line x1="422" y1="322" x2="422" y2="370" stroke="rgba(255,255,255,0.12)" />
+
+          <text x="74" y="354" fill="rgba(215,197,143,0.88)" font-size="15" font-family="Georgia, serif">
+            sparse input
+          </text>
+          <text x="162" y="354" fill="rgba(242,242,240,0.45)" font-size="13" font-family="Inter, sans-serif">
+            becomes geometry, then computation
+          </text>
         </svg>
       </div>
     </article>
-
-    <p class="note">
-      The full explainer page is not written yet. For now, this entry marks the
-      paper as one of the main technical routes into the mixed-volume side of the
-      reservoir.
-    </p>
   </div>
 </section>
 
