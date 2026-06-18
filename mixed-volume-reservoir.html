@@ -8,7 +8,7 @@
 
   <meta
     name="description"
-    content="A working inventory of material around mixed volumes, sparse polynomial systems, computational algebra, papers, explainers, and Julia experiments."
+    content="A central inventory page for material around mixed volumes, sparse polynomial systems, computational algebra, papers, explainers, Julia experiments, and future project pages."
   />
 
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -295,6 +295,12 @@
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
+    .inventory-map {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
     .card {
       min-height: 100%;
       border: 1px solid var(--line);
@@ -399,6 +405,22 @@
       border-color: rgba(190, 120, 120, 0.25);
     }
 
+    .map-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 260px;
+    }
+
+    .map-number {
+      position: absolute;
+      right: 20px;
+      top: 14px;
+      color: rgba(255, 255, 255, 0.055);
+      font-size: 4.8rem;
+      line-height: 1;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
     .meta-row {
       display: flex;
       flex-wrap: wrap;
@@ -440,75 +462,78 @@
       font-size: 0.9rem;
     }
 
-    .inventory-map {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-    }
-
-    .map-card {
-      position: relative;
-      overflow: hidden;
-      min-height: 245px;
-    }
-
-    .map-number {
-      position: absolute;
-      right: 20px;
-      top: 14px;
-      color: rgba(255, 255, 255, 0.055);
-      font-size: 4.8rem;
-      line-height: 1;
-      font-family: Georgia, "Times New Roman", serif;
-    }
-
-    .shelf {
+    .preview-list {
       border: 1px solid var(--line);
       border-radius: var(--radius);
       overflow: hidden;
       background: rgba(255, 255, 255, 0.025);
     }
 
-    .shelf-row {
+    .preview-row {
       display: grid;
-      grid-template-columns: 0.35fr 1fr 0.34fr;
+      grid-template-columns: 0.32fr 1fr 0.34fr;
       gap: 18px;
       padding: 22px;
       border-top: 1px solid var(--line-soft);
       align-items: start;
     }
 
-    .shelf-row:first-child {
+    .preview-row:first-child {
       border-top: 0;
     }
 
-    .shelf-kicker {
+    .preview-kicker {
       color: var(--gold);
       font-size: 0.74rem;
       text-transform: uppercase;
       letter-spacing: 0.13em;
     }
 
-    .shelf-title {
+    .preview-title {
       font-weight: 650;
       color: var(--text);
     }
 
-    .shelf-desc {
+    .preview-desc {
       color: var(--muted);
       margin-top: 6px;
       font-size: 0.95rem;
     }
 
-    .shelf-action {
+    .preview-action {
       justify-self: end;
       color: var(--muted-2);
       font-size: 0.88rem;
       text-align: right;
     }
 
-    .shelf-action a {
+    .preview-action a {
       color: var(--gold);
+    }
+
+    .route-card {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background:
+        linear-gradient(180deg, rgba(216, 181, 109, 0.07), rgba(255, 255, 255, 0.025)),
+        rgba(255, 255, 255, 0.025);
+      padding: 28px;
+    }
+
+    .route-line {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .route-step {
+      border: 1px solid var(--line-soft);
+      border-radius: 999px;
+      padding: 7px 12px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.025);
+      font-size: 0.86rem;
     }
 
     .timeline {
@@ -580,10 +605,7 @@
 
       .hero-grid,
       .section-head,
-      .grid.two {
-        grid-template-columns: 1fr;
-      }
-
+      .grid.two,
       .grid.three,
       .inventory-map {
         grid-template-columns: 1fr;
@@ -597,11 +619,11 @@
         padding-top: 82px;
       }
 
-      .shelf-row {
+      .preview-row {
         grid-template-columns: 1fr;
       }
 
-      .shelf-action {
+      .preview-action {
         justify-self: start;
         text-align: left;
       }
@@ -655,22 +677,23 @@
           <h1>Mixed Volume Reservoir.</h1>
 
           <p class="hero-text">
-            A working inventory for my study of mixed volumes, sparse polynomial systems,
-            and the computational algebra surrounding them. This is not a single finished
-            project, but a structured place where concepts, papers, code experiments, and
-            future project pages are collected.
+            A central inventory for my study of mixed volumes, sparse polynomial systems,
+            and the computational algebra surrounding them. This page is not itself the
+            full concept shelf, paper shelf, or code laboratory. It is the entrance room:
+            a map of the material already collected and of the integrated pages that will
+            branch from it.
           </p>
 
           <div class="hero-actions">
             <a class="btn primary" href="#inventory">Enter the inventory</a>
-            <a class="btn" href="#papers">Paper shelf</a>
-            <a class="btn" href="#julia">Julia laboratory</a>
+            <a class="btn" href="mixed-volume-concepts.html">Concept shelf</a>
+            <a class="btn" href="mixed-volume-papers.html">Paper shelf</a>
           </div>
         </div>
 
         <aside class="hero-card" aria-label="Reservoir visual">
           <div class="reservoir-visual">
-            <svg class="reservoir-svg" viewBox="0 0 560 420" role="img" aria-label="A schematic inventory of polytopes, papers, code, and project corridors">
+            <svg class="reservoir-svg" viewBox="0 0 560 420" role="img" aria-label="A schematic inventory of concepts, papers, code, and project corridors">
               <defs>
                 <linearGradient id="goldLine" x1="0" y1="0" x2="1" y2="1">
                   <stop offset="0%" stop-color="rgba(216,181,109,0.95)" />
@@ -698,9 +721,9 @@
               <rect x="234" y="158" width="94" height="34" rx="10" fill="rgba(255,255,255,0.055)" stroke="rgba(255,255,255,0.13)" />
               <rect x="362" y="158" width="94" height="34" rx="10" fill="rgba(255,255,255,0.055)" stroke="rgba(255,255,255,0.13)" />
 
-              <text x="124" y="181" fill="rgba(231,226,216,0.78)" font-size="15" font-family="Georgia, serif">papers</text>
-              <text x="261" y="181" fill="rgba(231,226,216,0.78)" font-size="15" font-family="Georgia, serif">code</text>
-              <text x="384" y="181" fill="rgba(231,226,216,0.78)" font-size="15" font-family="Georgia, serif">notes</text>
+              <text x="119" y="181" fill="rgba(231,226,216,0.78)" font-size="15" font-family="Georgia, serif">concepts</text>
+              <text x="258" y="181" fill="rgba(231,226,216,0.78)" font-size="15" font-family="Georgia, serif">papers</text>
+              <text x="383" y="181" fill="rgba(231,226,216,0.78)" font-size="15" font-family="Georgia, serif">Julia</text>
 
               <circle cx="151" cy="262" r="25" fill="rgba(216,181,109,0.11)" stroke="rgba(216,181,109,0.55)" />
               <circle cx="281" cy="262" r="25" fill="rgba(216,181,109,0.11)" stroke="rgba(216,181,109,0.55)" />
@@ -709,20 +732,20 @@
               <path d="M176 262 C214 238, 242 238, 256 262" fill="none" stroke="rgba(216,181,109,0.38)" />
               <path d="M306 262 C344 238, 372 238, 386 262" fill="none" stroke="rgba(216,181,109,0.38)" />
 
-              <text x="140" y="267" fill="rgba(231,226,216,0.78)" font-size="18" font-family="Georgia, serif">A</text>
-              <text x="270" y="267" fill="rgba(231,226,216,0.78)" font-size="18" font-family="Georgia, serif">B</text>
-              <text x="400" y="267" fill="rgba(231,226,216,0.78)" font-size="18" font-family="Georgia, serif">C</text>
+              <text x="140" y="267" fill="rgba(231,226,216,0.78)" font-size="18" font-family="Georgia, serif">C</text>
+              <text x="270" y="267" fill="rgba(231,226,216,0.78)" font-size="18" font-family="Georgia, serif">P</text>
+              <text x="400" y="267" fill="rgba(231,226,216,0.78)" font-size="18" font-family="Georgia, serif">J</text>
 
               <text x="118" y="356" fill="rgba(216,181,109,0.85)" font-size="34" font-family="Georgia, serif" filter="url(#softGlow)">MV</text>
-              <text x="180" y="352" fill="rgba(231,226,216,0.62)" font-size="15" font-family="Inter, sans-serif">concepts → papers → computations → projects</text>
+              <text x="180" y="352" fill="rgba(231,226,216,0.62)" font-size="15" font-family="Inter, sans-serif">central inventory → integrated shelves → project pages</text>
             </svg>
           </div>
 
           <div class="hero-card-body">
-            <div class="small-label">Working archive</div>
+            <div class="small-label">Reservoir architecture</div>
             <p>
-              The reservoir is meant to grow: each shelf can later become a separate
-              explainer, code note, paper page, or research log.
+              The reservoir points outward. The full shelves will live on separate pages;
+              this page keeps the map, selected previews, and active corridors.
             </p>
           </div>
         </aside>
@@ -734,50 +757,49 @@
         <div class="section-head">
           <div>
             <div class="eyebrow">What this page is</div>
-            <h2>A mathematical inventory, not a single endpoint.</h2>
+            <h2>The entrance room of a developing direction.</h2>
           </div>
 
           <p class="section-intro">
-            This page collects the raw material of a developing direction. Its purpose is
-            to keep together the convex-geometric language of Newton polytopes, the
-            algebraic language of sparse polynomial systems, the algorithmic language of
-            mixed volume computation, and the computational experiments that make the
-            subject concrete.
+            The reservoir is a central page for organizing a mathematical direction before
+            every part of it has become a finished project. It collects the vocabulary,
+            papers, computational experiments, and project branches around mixed volumes,
+            sparse polynomial systems, and computational algebra.
           </p>
         </div>
 
         <div class="grid three">
           <article class="card">
-            <span class="status">Reservoir</span>
-            <h3>Organized accumulation</h3>
+            <span class="status">Inventory</span>
+            <h3>Not the full shelves</h3>
             <p>
-              The page records concepts, papers, examples, code fragments, and future
-              project branches before they become polished standalone articles.
+              This page gives the map and selected previews. The full concept shelf,
+              paper shelf, and Julia laboratory are separate integrated pages.
             </p>
           </article>
 
           <article class="card">
-            <span class="status blue">Bridge</span>
+            <span class="status blue">Direction</span>
             <h3>Geometry to algebra</h3>
             <p>
-              Mixed volume is treated as a bridge between convex geometry and the
-              structure of polynomial systems with sparse support.
+              The underlying theme is the passage from polynomial supports to Newton
+              polytopes, mixed volume, sparse resultants, and separation information.
             </p>
           </article>
 
           <article class="card">
-            <span class="status green">Laboratory</span>
-            <h3>Computation as clarification</h3>
+            <span class="status green">Growth</span>
+            <h3>Expandable structure</h3>
             <p>
-              Julia experiments will be used to test small examples, encode polytopes,
-              and make algorithmic constructions visible.
+              New notes, uploaded papers, and code experiments can later become their
+              own pages without making the reservoir itself chaotic.
             </p>
           </article>
         </div>
 
         <p class="note">
-          The reservoir is intentionally incomplete. Its value is that unfinished material
-          remains visible, organized, and ready to be expanded into separate pages.
+          The right mental model is: reservoir first, shelves second, individual entries
+          third. This page is the reservoir.
         </p>
       </div>
     </section>
@@ -787,13 +809,13 @@
         <div class="section-head">
           <div>
             <div class="eyebrow">Inventory map</div>
-            <h2>Four shelves of the same project.</h2>
+            <h2>The shelves branch into their own pages.</h2>
           </div>
 
           <p class="section-intro">
-            The reservoir is divided into shelves. Each shelf contains a different kind of
-            material: conceptual explanations, papers, code experiments, and project
-            corridors that can later become independent pages.
+            Each shelf below is designed to become a separate integrated page. The links
+            are already placed, even when the corresponding files have not yet been
+            created.
           </p>
         </div>
 
@@ -801,276 +823,217 @@
           <article class="card map-card">
             <div class="map-number">01</div>
             <span class="status">Concepts</span>
-            <h3>Concept shelf</h3>
+            <h3>Concept Shelf</h3>
             <p>
-              Short explanations of the basic objects: supports, Newton polytopes,
-              Minkowski sums, mixed volume, Bernstein's theorem, sparse resultants, and
-              separation bounds.
+              The full mathematical dictionary: supports, Newton polytopes, Minkowski
+              sums, mixed volume, Bernstein’s theorem, sparse resultants, and separation
+              bounds.
             </p>
-            <a class="soft-link" href="#concepts">Open concept shelf</a>
+            <a class="soft-link" href="mixed-volume-concepts.html">Enter concept shelf</a>
           </article>
 
           <article class="card map-card">
             <div class="map-number">02</div>
             <span class="status blue">Papers</span>
-            <h3>Paper shelf</h3>
+            <h3>Paper Shelf</h3>
             <p>
-              A reading inventory of papers and notes that support the direction. Some
-              will remain references; others will branch into project pages like the DMM
-              Bound.
+              A reading inventory of papers, references, and future undergraduate
+              translations. Some entries will link directly to papers; others will become
+              project pages.
             </p>
-            <a class="soft-link" href="#papers">Open paper shelf</a>
+            <a class="soft-link" href="mixed-volume-papers.html">Enter paper shelf</a>
           </article>
 
           <article class="card map-card">
             <div class="map-number">03</div>
             <span class="status green">Code</span>
-            <h3>Julia laboratory</h3>
+            <h3>Julia Laboratory</h3>
             <p>
-              A place for small computational experiments: representing polytopes,
-              checking examples, computing simple mixed volumes, and testing algorithmic
-              ideas.
+              A future laboratory page for small examples, exact computations, data
+              structures for polytopes, and implementation notes around mixed volume.
             </p>
-            <a class="soft-link" href="#julia">Open laboratory</a>
+            <a class="soft-link" href="mixed-volume-julia.html">Enter Julia laboratory</a>
           </article>
 
           <article class="card map-card">
             <div class="map-number">04</div>
             <span class="status red">Projects</span>
-            <h3>Project corridors</h3>
+            <h3>Project Corridors</h3>
             <p>
-              The outward-facing branches of the reservoir: polished pages, undergraduate
-              translations, implementation projects, and future research notes.
+              The outward-facing branches of the reservoir: polished pages, serious
+              explainers, computational notes, and research-oriented project fragments.
             </p>
-            <a class="soft-link" href="#corridors">Open corridors</a>
+            <a class="soft-link" href="mixed-volume-corridors.html">Enter project corridors</a>
           </article>
         </div>
       </div>
     </section>
 
-    <section id="concepts">
+    <section id="selected-concepts">
       <div class="container">
         <div class="section-head">
           <div>
-            <div class="eyebrow">Concept shelf</div>
-            <h2>Objects to be made explicit.</h2>
+            <div class="eyebrow">Selected concepts</div>
+            <h2>A small preview of the future concept shelf.</h2>
           </div>
 
           <p class="section-intro">
-            This shelf will become a sequence of explainers. The aim is not merely to
-            define each object, but to show why it enters the study of sparse polynomial
-            systems and how it participates in computation.
+            These are not the full concept entries. They are previews of the objects that
+            will later be developed in the dedicated concept shelf page.
           </p>
         </div>
 
         <div class="grid three">
           <article class="card">
-            <span class="status">Planned explainer</span>
-            <h3>Supports and Newton polytopes</h3>
+            <span class="status">Preview</span>
+            <h3>Newton polytopes</h3>
             <p>
-              The support of a polynomial records which monomials appear. Its convex hull
-              is the Newton polytope, turning algebraic sparsity into convex geometry.
+              A polynomial support becomes a finite set of exponent vectors. Its convex
+              hull is the Newton polytope, turning algebraic sparsity into geometry.
             </p>
             <div class="meta-row">
-              <span class="pill">sparse polynomials</span>
+              <span class="pill">supports</span>
               <span class="pill">convex hulls</span>
             </div>
           </article>
 
           <article class="card">
-            <span class="status">Planned explainer</span>
-            <h3>Minkowski sums</h3>
-            <p>
-              The operation \(A+B=\{a+b:a\in A,\ b\in B\}\) is the natural addition of
-              convex bodies and prepares the ground for mixed volume.
-            </p>
-            <div class="meta-row">
-              <span class="pill">convex geometry</span>
-              <span class="pill">polytope arithmetic</span>
-            </div>
-          </article>
-
-          <article class="card">
-            <span class="status">Core concept</span>
+            <span class="status">Preview</span>
             <h3>Mixed volume</h3>
             <p>
-              Mixed volume is the coefficient hidden inside the volume polynomial of a
+              Mixed volume is the multilinear coefficient hidden in the volume of a
               Minkowski combination. It measures how several polytopes interact.
             </p>
             <div class="meta-row">
-              <span class="pill">volume polynomial</span>
+              <span class="pill">Minkowski sums</span>
               <span class="pill">BKK bound</span>
             </div>
           </article>
 
           <article class="card">
-            <span class="status blue">Theorem shelf</span>
-            <h3>Bernstein's theorem</h3>
+            <span class="status blue">Preview</span>
+            <h3>Bernstein’s theorem</h3>
             <p>
-              The number of isolated solutions of a generic sparse system in the algebraic
-              torus is controlled by the mixed volume of the Newton polytopes.
+              For a generic sparse system, the number of isolated solutions in the
+              algebraic torus is controlled by the mixed volume of the Newton polytopes.
             </p>
             <div class="meta-row">
+              <span class="pill">sparse systems</span>
               <span class="pill">torus solutions</span>
-              <span class="pill">generic systems</span>
-            </div>
-          </article>
-
-          <article class="card">
-            <span class="status blue">Algebraic bridge</span>
-            <h3>Sparse resultants</h3>
-            <p>
-              Resultants encode elimination. In the sparse setting, their structure is
-              governed by supports, Newton polytopes, and mixed-volume phenomena.
-            </p>
-            <div class="meta-row">
-              <span class="pill">elimination</span>
-              <span class="pill">resultants</span>
-            </div>
-          </article>
-
-          <article class="card">
-            <span class="status red">Connection</span>
-            <h3>Separation bounds</h3>
-            <p>
-              Separation bounds estimate how close distinct solutions can be. This is
-              where the DMM direction enters the reservoir.
-            </p>
-            <div class="meta-row">
-              <span class="pill">DMM</span>
-              <span class="pill">root separation</span>
             </div>
           </article>
         </div>
+
+        <p class="note">
+          The full concept shelf should explain these entries slowly, with examples,
+          diagrams, and links to the papers where they become operational.
+        </p>
+
+        <a class="soft-link" href="mixed-volume-concepts.html">Go to the future concept shelf</a>
       </div>
     </section>
 
-    <section id="papers">
+    <section id="selected-papers">
       <div class="container">
         <div class="section-head">
           <div>
-            <div class="eyebrow">Paper shelf</div>
-            <h2>References, routes, and future pages.</h2>
+            <div class="eyebrow">Selected papers</div>
+            <h2>A preview of the reading inventory.</h2>
           </div>
 
           <p class="section-intro">
-            Some papers will be linked directly as references. Others will receive their
-            own project pages, where the main definitions, results, and methods are
-            translated into a more accessible mathematical narrative.
+            The paper shelf will be the place where references are collected and sorted.
+            This reservoir page only shows the main routes currently visible.
           </p>
         </div>
 
-        <div class="shelf">
-          <div class="shelf-row">
-            <div class="shelf-kicker">Active page</div>
+        <div class="preview-list">
+          <div class="preview-row">
+            <div class="preview-kicker">Active page</div>
             <div>
-              <div class="shelf-title">The DMM Bound</div>
-              <div class="shelf-desc">
+              <div class="preview-title">The DMM Bound</div>
+              <div class="preview-desc">
                 A project page on the passage from one-variable separation bounds to
                 sparse polynomial systems through projection, resultants, and mixed
                 volumes.
               </div>
             </div>
-            <div class="shelf-action">
+            <div class="preview-action">
               <a href="dmmbound.html">Open page</a>
             </div>
           </div>
 
-          <div class="shelf-row">
-            <div class="shelf-kicker">Reading route</div>
+          <div class="preview-row">
+            <div class="preview-kicker">Future route</div>
             <div>
-              <div class="shelf-title">Canny–Emiris direction</div>
-              <div class="shelf-desc">
-                Material around mixed subdivision, exact mixed volume computation, and
-                algorithms connecting convex geometry with sparse polynomial solving.
+              <div class="preview-title">Canny–Emiris direction</div>
+              <div class="preview-desc">
+                The algorithmic route toward exact mixed volume computation, mixed
+                subdivisions, and sparse polynomial solving.
               </div>
             </div>
-            <div class="shelf-action">
-              Paper link to be inserted
+            <div class="preview-action">
+              <a href="mixed-volume-papers.html">To paper shelf</a>
             </div>
           </div>
 
-          <div class="shelf-row">
-            <div class="shelf-kicker">Background</div>
+          <div class="preview-row">
+            <div class="preview-kicker">Background</div>
             <div>
-              <div class="shelf-title">Bernstein–Kushnirenko–Khovanskii theorem</div>
-              <div class="shelf-desc">
-                The conceptual backbone behind the use of mixed volume as a solution
+              <div class="preview-title">BKK theorem background</div>
+              <div class="preview-desc">
+                The conceptual backbone behind the role of mixed volume as a solution
                 count for generic sparse systems.
               </div>
             </div>
-            <div class="shelf-action">
-              Reference to be selected
-            </div>
-          </div>
-
-          <div class="shelf-row">
-            <div class="shelf-kicker">Future project</div>
-            <div>
-              <div class="shelf-title">Sparse resultants and elimination</div>
-              <div class="shelf-desc">
-                A possible future page on how elimination changes when polynomial systems
-                are treated through supports rather than only through total degree.
-              </div>
-            </div>
-            <div class="shelf-action">
-              Coming later
-            </div>
-          </div>
-
-          <div class="shelf-row">
-            <div class="shelf-kicker">Future project</div>
-            <div>
-              <div class="shelf-title">Undergraduate translation notes</div>
-              <div class="shelf-desc">
-                A planned layer of notes that follows selected papers while unpacking
-                each definition, theorem, and construction in accessible language.
-              </div>
-            </div>
-            <div class="shelf-action">
-              Coming later
+            <div class="preview-action">
+              <a href="mixed-volume-papers.html">To paper shelf</a>
             </div>
           </div>
         </div>
+
+        <p class="note">
+          Later, this preview should become lighter: the real bibliographic work belongs
+          in <em>mixed-volume-papers.html</em>.
+        </p>
       </div>
     </section>
 
-    <section id="julia">
+    <section id="julia-preview">
       <div class="container">
         <div class="section-head">
           <div>
-            <div class="eyebrow">Julia laboratory</div>
-            <h2>Code as a way of seeing.</h2>
+            <div class="eyebrow">Julia preview</div>
+            <h2>The future code laboratory.</h2>
           </div>
 
           <p class="section-intro">
-            This part of the reservoir is reserved for computational experiments. The goal
-            is not only to implement algorithms, but to use code as a microscope for small
-            examples: supports, polytopes, subdivisions, and mixed-volume computations.
+            The Julia laboratory should not be just a code dump. It should connect small
+            experiments to the mathematical objects in the concept shelf and the papers
+            in the paper shelf.
           </p>
         </div>
 
-        <div class="grid two">
+        <div class="grid three">
           <article class="card">
-            <span class="status green">Laboratory note</span>
+            <span class="status green">Preview</span>
             <h3>Polytopes as data</h3>
             <p>
-              Represent finite supports, compute convex hulls when possible, and keep
-              small examples where the translation from monomials to geometry is visible.
+              Represent finite supports, exponent vectors, convex hulls, and small
+              examples where the algebra-to-geometry translation is visible.
             </p>
             <div class="meta-row">
               <span class="pill">Julia</span>
               <span class="pill">supports</span>
-              <span class="pill">Newton polytopes</span>
             </div>
           </article>
 
           <article class="card">
-            <span class="status green">Experiment</span>
+            <span class="status green">Preview</span>
             <h3>Small mixed volume examples</h3>
             <p>
-              Build examples in low dimension where the mixed volume can be computed by
-              hand and compared with a programmatic computation.
+              Begin in dimension two with examples that can be checked by hand before
+              moving toward algorithmic computation.
             </p>
             <div class="meta-row">
               <span class="pill">dimension 2</span>
@@ -1079,24 +1042,11 @@
           </article>
 
           <article class="card">
-            <span class="status green">Experiment</span>
-            <h3>Mixed subdivisions</h3>
-            <p>
-              Record the first experiments with subdivisions and the combinatorial objects
-              needed for exact mixed volume algorithms.
-            </p>
-            <div class="meta-row">
-              <span class="pill">subdivision</span>
-              <span class="pill">algorithmic geometry</span>
-            </div>
-          </article>
-
-          <article class="card">
-            <span class="status green">Future code page</span>
+            <span class="status green">Preview</span>
             <h3>Implementation diary</h3>
             <p>
-              A future page for keeping a clean record of design decisions, failed
-              attempts, corrected algorithms, examples, and reusable Julia fragments.
+              A future record of decisions, failed attempts, corrected algorithms, and
+              reusable fragments developed while learning exact mixed volume computation.
             </p>
             <div class="meta-row">
               <span class="pill">research log</span>
@@ -1105,25 +1055,21 @@
           </article>
         </div>
 
-        <p class="note">
-          The laboratory should remain honest: small examples first, exact computations
-          when possible, and no claim of implementation maturity before the code earns it.
-        </p>
+        <a class="soft-link" href="mixed-volume-julia.html">Go to the future Julia laboratory</a>
       </div>
     </section>
 
-    <section id="corridors">
+    <section id="corridors-preview">
       <div class="container">
         <div class="section-head">
           <div>
             <div class="eyebrow">Project corridors</div>
-            <h2>Where the reservoir branches outward.</h2>
+            <h2>Finished pages will branch from the reservoir.</h2>
           </div>
 
           <p class="section-intro">
-            The reservoir is the central room. The corridors are the future finished
-            pages: each one takes a piece of the inventory and turns it into a focused
-            mathematical project, explainer, or computational note.
+            A corridor is more focused than a shelf. It is a particular page, project,
+            explainer, or implementation note that grows out of the reservoir.
           </p>
         </div>
 
@@ -1145,7 +1091,7 @@
               A future project page around algorithms for computing mixed volume exactly,
               with emphasis on mixed subdivisions and implementable examples.
             </p>
-            <span class="muted-link">Page not yet created</span>
+            <a class="soft-link" href="mixed-volume-corridors.html">Corridor placeholder</a>
           </article>
 
           <article class="card">
@@ -1155,19 +1101,49 @@
               A future explainer translating polynomial supports into convex-geometric
               objects, with examples that can be computed by hand.
             </p>
-            <span class="muted-link">Page not yet created</span>
-          </article>
-
-          <article class="card">
-            <span class="status red">Planned corridor</span>
-            <h3>Julia notes for computational algebra</h3>
-            <p>
-              A future code-oriented page for small Julia programs, examples, and
-              implementation fragments related to the reservoir.
-            </p>
-            <span class="muted-link">Page not yet created</span>
+            <a class="soft-link" href="mixed-volume-corridors.html">Corridor placeholder</a>
           </article>
         </div>
+      </div>
+    </section>
+
+    <section id="architecture">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Architecture</div>
+            <h2>The reservoir should stay navigable.</h2>
+          </div>
+
+          <p class="section-intro">
+            As the direction grows, the site should not become a single long page. The
+            reservoir keeps a clean division between overview, shelves, and finished
+            project pages.
+          </p>
+        </div>
+
+        <article class="route-card">
+          <h3>Current structure</h3>
+          <p>
+            The intended structure is a small subsite inside the larger academic website.
+            The reservoir remains the entrance; the shelves and corridors become separate
+            files.
+          </p>
+
+          <div class="route-line">
+            <span class="route-step">mixed-volume-reservoir.html</span>
+            <span class="route-step">mixed-volume-concepts.html</span>
+            <span class="route-step">mixed-volume-papers.html</span>
+            <span class="route-step">mixed-volume-julia.html</span>
+            <span class="route-step">mixed-volume-corridors.html</span>
+            <span class="route-step">dmmbound.html</span>
+          </div>
+        </article>
+
+        <p class="note">
+          The placeholder links may lead to missing pages for now. That is intentional:
+          the doors are installed before the rooms are built.
+        </p>
       </div>
     </section>
 
@@ -1180,9 +1156,8 @@
           </div>
 
           <p class="section-intro">
-            This page is meant to change as the direction becomes clearer. The current
-            stage is collection and orientation: mapping the objects, deciding which
-            papers deserve full treatment, and building small computational experiments.
+            The current stage is architectural: decide what belongs on the reservoir
+            homepage, what belongs in a shelf, and what deserves its own corridor page.
           </p>
         </div>
 
@@ -1190,10 +1165,10 @@
           <div class="timeline-item">
             <div class="timeline-phase">Phase I</div>
             <div>
-              <h3>Collect the objects</h3>
+              <h3>Stabilize the reservoir</h3>
               <p>
-                Stabilize the core vocabulary: supports, Newton polytopes, Minkowski sums,
-                mixed volume, sparse systems, resultants, and separation bounds.
+                Keep this page as the central map: a serious overview of the direction,
+                with selected previews and clear links outward.
               </p>
             </div>
           </div>
@@ -1201,10 +1176,10 @@
           <div class="timeline-item">
             <div class="timeline-phase">Phase II</div>
             <div>
-              <h3>Build the paper shelf</h3>
+              <h3>Build the concept shelf</h3>
               <p>
-                Add exact links, reading notes, and short descriptions of the papers that
-                define the direction. Decide which papers deserve full project pages.
+                Create the dedicated page for definitions, examples, diagrams, and
+                conceptual connections between sparse algebra and convex geometry.
               </p>
             </div>
           </div>
@@ -1212,10 +1187,10 @@
           <div class="timeline-item">
             <div class="timeline-phase">Phase III</div>
             <div>
-              <h3>Open the Julia laboratory</h3>
+              <h3>Build the paper shelf</h3>
               <p>
-                Start from minimal examples and slowly build toward exact mixed volume
-                computations, with every experiment tied to a mathematical explanation.
+                Add exact links, reading notes, and short explanations of the papers that
+                define the direction.
               </p>
             </div>
           </div>
@@ -1223,20 +1198,18 @@
           <div class="timeline-item">
             <div class="timeline-phase">Phase IV</div>
             <div>
-              <h3>Branch into finished pages</h3>
+              <h3>Open the Julia laboratory</h3>
               <p>
-                Turn selected parts of the inventory into polished pages: explainers,
-                undergraduate translations, computational notes, and research-oriented
-                project pages.
+                Start from minimal examples and build toward exact mixed volume
+                computations, with every experiment tied to mathematical explanation.
               </p>
             </div>
           </div>
         </div>
 
         <p class="note">
-          The reservoir should remain useful even before it is complete: a visible map of
-          the material already collected, the material being understood, and the material
-          waiting to become a separate project.
+          This page should remain useful even before the shelves are complete: it is the
+          visible map of what exists, what is planned, and where each future page belongs.
         </p>
       </div>
     </section>
