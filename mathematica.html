@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mathematica Atlas v0.1</title>
+  <style>
+    :root {
+      --bg: #07080b;
+      --panel: rgba(10, 12, 18, 0.74);
+      --panel-strong: rgba(10, 12, 18, 0.91);
+      --line: rgba(255, 255, 255, 0.14);
+      --text: #efe6d2;
+      --muted: #a99f8e;
+      --gold: #c59b55;
+      --white-seat: #f3efe6;
+      --shadow: rgba(0, 0, 0, 0.48);
+      --font-ui: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-title: Georgia, "Times New Roman", serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 48%, rgba(142, 91, 39, 0.12), transparent 35%),
+        radial-gradient(circle at 18% 72%, rgba(91, 60, 160, 0.12), transparent 28%),
+        radial-gradient(circle at 82% 42%, rgba(30, 73, 130, 0.16), transparent 30%),
+        var(--bg);
+      color: var(--text);
+      font-family: var(--font-ui);
+      user-select: none;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.014) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mask-image: radial-gradient(circle at 50% 50%, black 20%, transparent 96%);
+      opacity: 0.34;
+      z-index: 2;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at center, transparent 45%, rgba(0,0,0,0.65) 100%);
+      z-index: 3;
+    }
+
+    .topbar {
+      position: fixed;
+      top: 20px;
+      left: 22px;
+      right: 22px;
+      z-index: 30;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      pointer-events: none;
+    }
+
+    .brand {
+      pointer-events: auto;
+      padding: 14px 16px 13px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(8, 10, 14, 0.62);
+      box-shadow: 0 20px 50px var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .brand .eyebrow {
+      color: var(--gold);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-family: var(--font-title);
+      font-weight: 500;
+      font-size: clamp(24px, 3vw, 40px);
+      letter-spacing: 0.03em;
+    }
+
+    .brand .subtitle {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 13px;
+      max-width: 520px;
+      line-height: 1.45;
+    }
+
+    .controls {
+      pointer-events: auto;
+      display: flex;
+      gap: 8px;
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(8, 10, 14, 0.62);
+      box-shadow: 0 20px 50px var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    button {
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 9px 11px;
+      font: 600 13px var(--font-ui);
+      cursor: pointer;
+      transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+    }
+
+    button:hover {
+      background: rgba(255,255,255,0.12);
+      border-color: rgba(255,255,255,0.26);
+      transform: translateY(-1px);
+    }
+
+    #mapShell {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      cursor: grab;
+      z-index: 5;
+      touch-action: none;
+    }
+
+    #mapShell.dragging { cursor: grabbing; }
+
+    #map {
+      width: 100%;
+      height: 100%;
+      display: block;
+      background:
+        radial-gradient(circle at 50% 48%, rgba(183, 131, 60, 0.08), transparent 20%),
+        radial-gradient(circle at 30% 60%, rgba(86, 50, 132, 0.08), transparent 28%),
+        radial-gradient(circle at 73% 34%, rgba(96, 24, 28, 0.10), transparent 32%);
+    }
+
+    .sea {
+      fill: url(#seaGradient);
+    }
+
+    .outer-sea {
+      fill: none;
+      stroke: rgba(99, 126, 146, 0.18);
+      stroke-width: 18;
+      stroke-dasharray: 3 18;
+      opacity: 0.7;
+    }
+
+    .continent {
+      stroke: rgba(237, 221, 180, 0.24);
+      stroke-width: 3.5;
+      filter: url(#landShadow);
+      vector-effect: non-scaling-stroke;
+    }
+
+    .continent-label {
+      font-family: var(--font-title);
+      font-size: 38px;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      fill: rgba(255, 241, 211, 0.74);
+      paint-order: stroke;
+      stroke: rgba(5, 6, 9, 0.74);
+      stroke-width: 8px;
+      pointer-events: none;
+    }
+
+    .seat-label {
+      font-family: var(--font-ui);
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      fill: rgba(255, 230, 182, 0.74);
+      paint-order: stroke;
+      stroke: rgba(5, 6, 9, 0.82);
+      stroke-width: 6px;
+      pointer-events: none;
+    }
+
+    .coast-line {
+      fill: none;
+      stroke: rgba(255, 244, 212, 0.16);
+      stroke-width: 8;
+      stroke-linecap: round;
+      opacity: 0.65;
+    }
+
+    .moon-capital {
+      fill: rgba(244, 240, 225, 0.84);
+      stroke: rgba(255,255,255,0.84);
+      stroke-width: 3;
+      filter: url(#whiteGlow);
+    }
+
+    .category-district {
+      fill: rgba(142, 145, 150, 0.72);
+      stroke: rgba(215, 213, 205, 0.50);
+      stroke-width: 2;
+      filter: url(#grayGlow);
+    }
+
+    .volcano {
+      fill: url(#volcanoGradient);
+      stroke: rgba(255, 196, 130, 0.82);
+      stroke-width: 3;
+      filter: url(#volcanoGlow);
+    }
+
+    .lava {
+      fill: none;
+      stroke: rgba(255, 117, 70, 0.55);
+      stroke-width: 4;
+      stroke-linecap: round;
+      opacity: 0.72;
+    }
+
+    .borderland {
+      fill: rgba(19, 48, 34, 0.35);
+      stroke: rgba(127, 176, 117, 0.12);
+      stroke-width: 2;
+      opacity: 0.85;
+      filter: url(#softBlur);
+      pointer-events: none;
+    }
+
+    .archipelago-island {
+      fill: rgba(100, 117, 53, 0.86);
+      stroke: rgba(237, 221, 180, 0.20);
+      stroke-width: 2;
+      filter: url(#landShadow);
+    }
+
+    .node {
+      cursor: pointer;
+      transform-box: fill-box;
+      transform-origin: center;
+    }
+
+    .node circle {
+      stroke: rgba(255, 245, 219, 0.78);
+      stroke-width: 2.2;
+      filter: url(#nodeGlow);
+      transition: stroke-width 160ms ease, filter 160ms ease, r 160ms ease;
+    }
+
+    .node:hover circle,
+    .node.active circle {
+      stroke-width: 4;
+      filter: url(#nodeGlowStrong);
+    }
+
+    .node text {
+      font-family: var(--font-ui);
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.03em;
+      fill: rgba(255, 239, 207, 0.92);
+      paint-order: stroke;
+      stroke: rgba(5, 6, 9, 0.86);
+      stroke-width: 5px;
+      pointer-events: none;
+    }
+
+    .node.minor text { font-size: 12px; opacity: 0.82; }
+    .node.major text { font-size: 16px; }
+
+    .node.monument circle { stroke: rgba(255, 215, 134, 0.95); }
+    .node.ruin circle { stroke: rgba(180, 171, 150, 0.65); }
+
+    .route {
+      fill: none;
+      stroke: rgba(255, 219, 147, 0.18);
+      stroke-width: 2.4;
+      stroke-dasharray: 8 12;
+      vector-effect: non-scaling-stroke;
+      pointer-events: none;
+    }
+
+    .panel {
+      position: fixed;
+      top: 126px;
+      right: 22px;
+      width: min(390px, calc(100vw - 44px));
+      max-height: calc(100vh - 150px);
+      overflow: auto;
+      z-index: 35;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: var(--panel);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.55);
+      backdrop-filter: blur(16px);
+      padding: 20px;
+      opacity: 0;
+      transform: translateX(16px);
+      pointer-events: none;
+      transition: opacity 220ms ease, transform 220ms ease;
+    }
+
+    .panel.open {
+      opacity: 1;
+      transform: translateX(0);
+      pointer-events: auto;
+    }
+
+    .panel .kind {
+      color: var(--gold);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .panel h2 {
+      margin: 0;
+      font-family: var(--font-title);
+      font-size: 28px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    .panel .seat {
+      margin-top: 5px;
+      color: rgba(255, 230, 182, 0.82);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .panel p {
+      color: rgba(239, 230, 210, 0.88);
+      line-height: 1.58;
+      font-size: 14px;
+      margin: 14px 0 0;
+    }
+
+    .panel h3 {
+      margin: 19px 0 8px;
+      font-size: 12px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(255, 230, 182, 0.72);
+    }
+
+    .panel ul {
+      margin: 8px 0 0;
+      padding-left: 18px;
+      color: rgba(239, 230, 210, 0.83);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .panel .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .chip {
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.06);
+      color: rgba(239, 230, 210, 0.9);
+      border-radius: 999px;
+      padding: 7px 9px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 160ms ease, border-color 160ms ease;
+    }
+
+    .chip:hover {
+      background: rgba(255,255,255,0.12);
+      border-color: rgba(255,255,255,0.25);
+    }
+
+    .close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      padding: 0;
+      font-size: 16px;
+    }
+
+    .legend {
+      position: fixed;
+      left: 22px;
+      bottom: 22px;
+      width: min(430px, calc(100vw - 44px));
+      z-index: 30;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(8, 10, 14, 0.58);
+      box-shadow: 0 20px 50px var(--shadow);
+      backdrop-filter: blur(12px);
+      padding: 13px 15px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      pointer-events: none;
+    }
+
+    .legend strong { color: var(--text); }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      z-index: 40;
+      transform: translateX(-50%);
+      padding: 10px 13px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(8, 10, 14, 0.66);
+      color: rgba(239, 230, 210, 0.88);
+      font-size: 12px;
+      backdrop-filter: blur(12px);
+      opacity: 0;
+      transition: opacity 200ms ease;
+      pointer-events: none;
+    }
+
+    .toast.show { opacity: 1; }
+
+    .zoom-hidden-1 { opacity: 0; transition: opacity 180ms ease; }
+    .zoom-hidden-2 { opacity: 0; transition: opacity 180ms ease; }
+
+    body.zoom-mid .zoom-hidden-1,
+    body.zoom-high .zoom-hidden-1 { opacity: 1; }
+
+    body.zoom-high .zoom-hidden-2 { opacity: 1; }
+
+    @media (max-width: 720px) {
+      .topbar { left: 12px; right: 12px; top: 12px; }
+      .brand { padding: 12px 13px; }
+      .brand .subtitle { display: none; }
+      .controls { flex-direction: column; }
+      .panel { top: 92px; right: 12px; width: calc(100vw - 24px); }
+      .legend { left: 12px; bottom: 12px; width: calc(100vw - 24px); }
+      .legend .hide-small { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <header class="brand">
+      <div class="eyebrow">Mathematica Atlas · v0.1</div>
+      <h1>Mathematica</h1>
+      <div class="subtitle">A medieval-fantasy, historical-conceptual world map of mathematics. Drag to travel, scroll to zoom, click a castle to read its story.</div>
+    </header>
+
+    <nav class="controls" aria-label="Map controls">
+      <button id="zoomIn" title="Zoom in">＋</button>
+      <button id="zoomOut" title="Zoom out">－</button>
+      <button id="resetView" title="Reset view">Reset</button>
+      <button id="chronicleNext" title="Chronicle step">Era →</button>
+    </nav>
+  </div>
+
+  <main id="mapShell" aria-label="Interactive Mathematica map">
+    <svg id="map" viewBox="0 0 2400 1600" role="img" aria-labelledby="mapTitle mapDesc">
+      <title id="mapTitle">Mathematica Atlas v0.1</title>
+      <desc id="mapDesc">A zoomable symbolic world map of mathematics with continents, capitals, castles, and first nodes.</desc>
+
+      <defs>
+        <radialGradient id="seaGradient" cx="50%" cy="50%" r="75%">
+          <stop offset="0%" stop-color="#111b21"/>
+          <stop offset="55%" stop-color="#0b1118"/>
+          <stop offset="100%" stop-color="#06070a"/>
+        </radialGradient>
+
+        <radialGradient id="volcanoGradient" cx="50%" cy="45%" r="55%">
+          <stop offset="0%" stop-color="#ffd38d"/>
+          <stop offset="30%" stop-color="#d3643f"/>
+          <stop offset="72%" stop-color="#4b2b24"/>
+          <stop offset="100%" stop-color="#1e1716"/>
+        </radialGradient>
+
+        <filter id="landShadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000" flood-opacity="0.45"/>
+        </filter>
+
+        <filter id="whiteGlow" x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur stdDeviation="4" result="blur"/>
+          <feMerge>
+            <feMergeNode in="blur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+
+        <filter id="grayGlow" x="-40%" y="-40%" width="180%" height="180%">
+          <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#bfc1c0" flood-opacity="0.26"/>
+        </filter>
+
+        <filter id="volcanoGlow" x="-60%" y="-60%" width="220%" height="220%">
+          <feDropShadow dx="0" dy="0" stdDeviation="16" flood-color="#ff8b53" flood-opacity="0.62"/>
+        </filter>
+
+        <filter id="nodeGlow" x="-80%" y="-80%" width="260%" height="260%">
+          <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#ffe0a5" flood-opacity="0.34"/>
+        </filter>
+
+        <filter id="nodeGlowStrong" x="-100%" y="-100%" width="300%" height="300%">
+          <feDropShadow dx="0" dy="0" stdDeviation="9" flood-color="#ffd581" flood-opacity="0.85"/>
+        </filter>
+
+        <filter id="softBlur">
+          <feGaussianBlur stdDeviation="1.2"/>
+        </filter>
+
+        <pattern id="forestPattern" width="42" height="42" patternUnits="userSpaceOnUse">
+          <path d="M8 30 L15 13 L23 30 Z" fill="rgba(31,75,48,0.28)"/>
+          <path d="M24 34 L31 14 L39 34 Z" fill="rgba(31,75,48,0.22)"/>
+        </pattern>
+
+        <pattern id="wavesPattern" width="56" height="26" patternUnits="userSpaceOnUse">
+          <path d="M0 13 C9 4, 18 4, 28 13 S47 22, 56 13" fill="none" stroke="rgba(160,205,232,0.13)" stroke-width="2"/>
+        </pattern>
+      </defs>
+
+      <g id="viewport">
+        <rect class="sea" x="-4000" y="-4000" width="10000" height="10000"/>
+        <circle class="outer-sea" cx="1200" cy="760" r="1050"/>
+
+        <!-- Far lands and large terrain -->
+        <path class="continent" data-region="open" fill="#15131c" d="M730 35 C920 -35 1160 20 1320 84 C1450 137 1545 130 1665 87 C1806 36 2008 45 2150 160 C2285 270 2278 445 2132 510 C1960 587 1775 505 1595 525 C1392 548 1195 662 986 602 C810 552 729 412 620 316 C523 231 570 92 730 35Z"/>
+        <text class="continent-label" x="1130" y="225">The Unconquered</text>
+        <text class="seat-label" x="1222" y="262">Northern dark land</text>
+
+        <path class="continent" data-region="mathphys" fill="#292241" d="M1876 760 C2043 684 2245 733 2355 895 C2494 1100 2360 1337 2140 1390 C1971 1431 1781 1370 1697 1225 C1608 1072 1671 852 1876 760Z"/>
+        <text class="continent-label" x="1815" y="1090" transform="rotate(-6 1815 1090)">Mathematical Physics</text>
+        <text class="seat-label" x="1945" y="1132">Seat of Cosmos</text>
+
+        <!-- Main continents -->
+        <path class="continent" data-region="algebra" fill="#3f2454" d="M86 555 C182 456 350 448 458 535 C558 616 539 760 620 836 C711 920 837 895 887 1014 C946 1156 837 1352 650 1402 C438 1457 223 1386 104 1225 C-22 1055 -19 768 86 555Z"/>
+        <path class="coast-line" d="M108 590 C230 500 372 492 455 577 C545 669 505 775 612 865"/>
+        <text class="continent-label" x="155" y="780" transform="rotate(-75 155 780)">Algebra</text>
+        <text class="seat-label" x="216" y="860" transform="rotate(-75 216 860)">Seat of Structure</text>
+
+        <path class="continent" data-region="computation" fill="#796039" d="M510 1215 C695 1045 987 1032 1185 1185 C1308 1280 1490 1242 1620 1332 C1772 1438 1682 1622 1488 1698 C1267 1783 1054 1658 843 1655 C642 1652 456 1769 282 1656 C102 1539 298 1410 510 1215Z"/>
+        <text class="continent-label" x="675" y="1457">Computation</text>
+        <text class="seat-label" x="823" y="1497">Seat of Procedure</text>
+
+        <path class="continent" data-region="probability" fill="#244d69" d="M1423 820 C1548 745 1728 760 1823 878 C1934 1015 1866 1228 1702 1305 C1521 1390 1317 1311 1252 1141 C1207 1023 1297 895 1423 820Z"/>
+        <path fill="url(#wavesPattern)" opacity="0.7" d="M1423 820 C1548 745 1728 760 1823 878 C1934 1015 1866 1228 1702 1305 C1521 1390 1317 1311 1252 1141 C1207 1023 1297 895 1423 820Z"/>
+        <text class="continent-label" x="1393" y="1060" transform="rotate(80 1393 1060)">Probability</text>
+        <text class="seat-label" x="1450" y="980" transform="rotate(80 1450 980)">Seat of Uncertainty</text>
+
+        <path class="continent" data-region="analysis" fill="#67292e" d="M1396 446 C1531 335 1773 372 1915 500 C2055 626 2025 790 1885 864 C1740 940 1543 870 1417 924 C1285 981 1155 912 1125 773 C1098 651 1265 553 1396 446Z"/>
+        <text class="continent-label" x="1498" y="650" transform="rotate(10 1498 650)">Analysis</text>
+        <text class="seat-label" x="1552" y="692" transform="rotate(10 1552 692)">Seat of Distance</text>
+
+        <path class="continent" data-region="geometry" fill="#526d57" d="M445 150 C609 40 842 58 968 188 C1065 288 1030 455 902 525 C767 599 609 515 484 588 C356 664 192 604 145 470 C103 350 292 253 445 150Z"/>
+        <path fill="url(#forestPattern)" opacity="0.65" d="M445 150 C609 40 842 58 968 188 C1065 288 1030 455 902 525 C767 599 609 515 484 588 C356 664 192 604 145 470 C103 350 292 253 445 150Z"/>
+        <text class="continent-label" x="448" y="347" transform="rotate(72 448 347)">Geometry</text>
+        <text class="seat-label" x="510" y="420" transform="rotate(72 510 420)">Seat of Shape</text>
+
+        <path class="continent" data-region="topology" fill="#42585c" d="M1118 246 C1225 175 1388 205 1455 320 C1520 432 1438 572 1307 602 C1168 635 1035 551 1007 422 C990 343 1040 298 1118 246Z"/>
+        <text class="continent-label" x="1112" y="405" transform="rotate(90 1112 405)">Topology</text>
+        <text class="seat-label" x="1170" y="440" transform="rotate(90 1170 440)">Seat of Essence</text>
+
+        <path class="continent" data-region="applied" fill="#5e5140" d="M1302 1214 C1404 1148 1547 1180 1605 1285 C1668 1398 1589 1520 1459 1532 C1332 1544 1215 1446 1225 1323 C1229 1271 1257 1243 1302 1214Z"/>
+        <text class="seat-label" x="1288" y="1374">Seat of Control</text>
+
+        <!-- Borderlands / forests / seas -->
+        <path class="borderland" d="M830 520 C955 540 1060 580 1148 670 C1036 765 908 820 760 805 C730 675 764 590 830 520Z"/>
+        <path class="borderland" d="M1264 733 C1348 710 1430 727 1504 792 C1455 860 1368 911 1270 898 C1225 830 1231 775 1264 733Z"/>
+        <path class="borderland" d="M1027 1010 C1152 1038 1245 1095 1310 1192 C1206 1245 1080 1242 980 1166 C956 1094 976 1045 1027 1010Z"/>
+
+        <!-- Number theory island -->
+        <path class="continent" data-region="number" fill="#406f3d" d="M670 748 C735 690 836 696 885 765 C936 836 897 940 814 965 C722 993 633 926 627 836 C624 800 641 774 670 748Z"/>
+        <text class="seat-label" x="673" y="846">Seat of Wonder</text>
+
+        <!-- Discrete archipelago -->
+        <g id="archipelago">
+          <path class="archipelago-island" d="M720 1052 C752 1020 808 1027 831 1067 C857 1114 813 1165 762 1153 C717 1141 689 1084 720 1052Z"/>
+          <path class="archipelago-island" d="M835 1130 C871 1096 935 1109 954 1161 C975 1218 919 1262 866 1237 C827 1219 810 1153 835 1130Z"/>
+          <path class="archipelago-island" d="M963 1038 C1008 1003 1078 1028 1090 1084 C1103 1143 1033 1188 982 1152 C944 1125 929 1065 963 1038Z"/>
+          <path class="archipelago-island" d="M626 1164 C661 1135 719 1152 732 1198 C746 1248 691 1287 649 1260 C610 1235 591 1192 626 1164Z"/>
+          <path class="archipelago-island" d="M1082 1206 C1114 1176 1172 1184 1195 1225 C1220 1270 1184 1325 1133 1320 C1085 1316 1050 1237 1082 1206Z"/>
+          <text class="seat-label" x="768" y="1308">Discrete Archipelago · Seat of Pattern</text>
+        </g>
+
+        <!-- Central volcano + capital -->
+        <path class="moon-capital" d="M1061 650 C1150 570 1282 585 1348 678 C1422 782 1362 932 1236 964 C1105 998 978 918 953 786 C941 725 991 688 1061 650Z"/>
+        <path class="sea" d="M1105 704 C1160 655 1246 666 1289 727 C1336 796 1297 894 1215 912 C1128 931 1043 878 1028 792 C1020 752 1059 735 1105 704Z"/>
+        <path class="category-district" d="M1238 665 C1300 664 1352 714 1358 778 C1321 757 1270 744 1223 757 C1218 724 1222 691 1238 665Z"/>
+        <circle class="volcano" cx="1165" cy="790" r="62"/>
+        <path class="lava" d="M1144 770 C1160 790 1148 818 1122 836"/>
+        <path class="lava" d="M1184 762 C1182 794 1203 806 1220 826"/>
+        <path class="lava" d="M1166 744 C1170 770 1164 791 1164 820"/>
+        <text class="seat-label" x="1015" y="626">Moon-Capital · Seat of Rigor</text>
+
+        <!-- Routes / initial migrations -->
+        <path class="route" d="M1130 820 C1012 817 927 811 846 820"/>
+        <path class="route" d="M1107 755 C910 640 743 546 602 420"/>
+        <path class="route" d="M1100 843 C902 887 696 873 493 840"/>
+        <path class="route" d="M1202 726 C1265 620 1358 554 1482 514"/>
+        <path class="route" d="M1240 835 C1356 900 1458 970 1564 1060"/>
+        <path class="route" d="M1118 893 C1004 1040 914 1160 816 1370"/>
+        <path class="route" d="M1268 885 C1435 1135 1665 1332 1938 1270"/>
+
+        <!-- Nodes are injected by JS -->
+        <g id="nodes"></g>
+      </g>
+    </svg>
+  </main>
+
+  <aside class="panel" id="panel" aria-live="polite">
+    <button class="close" id="closePanel" aria-label="Close panel">×</button>
+    <div class="kind" id="panelKind">Castle</div>
+    <h2 id="panelTitle">Mathematica</h2>
+    <div class="seat" id="panelSeat">Atlas</div>
+    <p id="panelStory">Click a castle, city, or monument on the map to read its role in the mathematical world.</p>
+    <h3>Self-study gate</h3>
+    <p id="panelStudy">The first version contains only the world identity and the first visible castles. The full study paths will be expanded later.</p>
+    <h3>Related travel</h3>
+    <div class="links" id="panelLinks"></div>
+  </aside>
+
+  <div class="legend">
+    <strong>Travel rules:</strong> distance from the volcano suggests historical distance from primitive mathematical impulse. Castles are first visible concepts. <span class="hide-small">The map is v0.1: beautiful, sparse, and ready to expand.</span>
+  </div>
+
+  <div class="toast" id="toast">Chronicle mode placeholder: eras will animate in later versions.</div>
+
+  <script>
+    const svg = document.getElementById("map");
+    const viewport = document.getElementById("viewport");
+    const shell = document.getElementById("mapShell");
+    const panel = document.getElementById("panel");
+    const panelKind = document.getElementById("panelKind");
+    const panelTitle = document.getElementById("panelTitle");
+    const panelSeat = document.getElementById("panelSeat");
+    const panelStory = document.getElementById("panelStory");
+    const panelStudy = document.getElementById("panelStudy");
+    const panelLinks = document.getElementById("panelLinks");
+    const closePanel = document.getElementById("closePanel");
+    const toast = document.getElementById("toast");
+
+    const REGION = {
+      origin: "#dd6b45",
+      foundations: "#f3efe6",
+      number: "#63a65a",
+      algebra: "#8d5fb5",
+      geometry: "#a9d6a8",
+      topology: "#82aeb2",
+      analysis: "#ba5359",
+      probability: "#6eb6df",
+      computation: "#d0ad62",
+      discrete: "#a9b463",
+      applied: "#bfa56f",
+      physics: "#9187cf",
+      open: "#6a6279"
+    };
+
+    const nodes = [
+      {
+        id: "volcano", name: "Volcano of Origin", kind: "Origin", seat: "Primitive Mathematical Impulse",
+        x: 1165, y: 790, region: "origin", level: "major monument",
+        story: "The first fire: counting, measuring, comparing, drawing, proving, computing, and wondering. It is not a field, but the source-event from which the mathematical world breaks outward.",
+        study: "Begin by asking what humans needed to do before mathematics had names: count, measure, compare, reason, calculate, and classify.",
+        links: ["counting", "shape", "proof", "procedure"]
+      },
+      { id: "counting", name: "Counting", kind: "Primitive House", seat: "Origin", x: 1084, y: 756, region: "origin", level: "minor", story: "The first numerical act: distinguishing one, many, more, less, and succession.", study: "Study natural numbers, operations, order, divisibility, and the meaning of discrete quantity.", links: ["natural_numbers", "primes", "number_theory"] },
+      { id: "measuring", name: "Measuring", kind: "Primitive House", seat: "Origin", x: 1238, y: 754, region: "origin", level: "minor", story: "The act of assigning magnitude: length, area, volume, ratio, and approximation.", study: "Study ratios, magnitudes, Euclidean geometry, and the later birth of real analysis.", links: ["geometry", "analysis", "limits"] },
+      { id: "shape", name: "Shape", kind: "Primitive House", seat: "Origin", x: 1092, y: 838, region: "origin", level: "minor", story: "The visual beginning of geometry: points, lines, circles, angles, boundaries, and form.", study: "Follow shape through Euclid, coordinates, manifolds, curvature, topology, and algebraic geometry.", links: ["euclidean_geometry", "geometry", "topology"] },
+      { id: "motion", name: "Motion", kind: "Primitive House", seat: "Origin", x: 1237, y: 840, region: "origin", level: "minor", story: "Change, speed, tangent, accumulation, and the road that eventually becomes calculus and differential equations.", study: "Study calculus, limits, differential equations, and the analytic description of change.", links: ["calculus", "differential_equations", "analysis"] },
+      { id: "proof", name: "Proof", kind: "Primitive House", seat: "Origin", x: 1165, y: 708, region: "foundations", level: "minor", story: "The passage from observation to necessity: argument, deduction, axiom, theorem.", study: "Study elementary logic, proof methods, induction, contradiction, construction, and formal systems.", links: ["logic", "formal_systems", "rigor"] },
+      { id: "procedure", name: "Procedure", kind: "Primitive House", seat: "Origin", x: 1166, y: 886, region: "computation", level: "minor", story: "The algorithmic instinct: a repeatable way to do something correctly.", study: "Begin with arithmetic procedures and the Euclidean algorithm, then move to algorithms, computability, and complexity.", links: ["euclidean_algorithm", "algorithms", "computability"] },
+
+      { id: "rigor", name: "Seat of Rigor", kind: "Capital", seat: "Foundations", x: 1065, y: 664, region: "foundations", level: "major monument", story: "The moon-shaped capital: modern mathematics' seat of language, exactness, formal meaning, and proof.", study: "Study proof, sets, logic, formal systems, type theory, and category-theoretic language.", links: ["logic", "set_theory", "category_theory"] },
+      { id: "logic", name: "Logic", kind: "Castle", seat: "Seat of Rigor", x: 1013, y: 720, region: "foundations", level: "major", story: "The formal study of valid inference, truth, syntax, semantics, and mathematical reasoning.", study: "Start with propositional and first-order logic; later branch to model theory, proof theory, and foundations.", links: ["proof", "formal_systems", "set_theory"] },
+      { id: "set_theory", name: "Set Theory", kind: "Castle", seat: "Seat of Rigor", x: 1048, y: 888, region: "foundations", level: "major", story: "The language of collections, membership, infinity, cardinality, and the modern universe of mathematical objects.", study: "Study sets, functions, relations, ordinals, cardinals, ZFC, and forcing later.", links: ["logic", "topological_spaces", "formal_systems"] },
+      { id: "formal_systems", name: "Formal Systems", kind: "Castle", seat: "Seat of Rigor", x: 1291, y: 893, region: "foundations", level: "major", story: "Axioms and rules made explicit: mathematics as derivation inside a formal language.", study: "Study syntax, proof systems, consistency, completeness, and incompleteness.", links: ["logic", "type_theory", "computability"] },
+      { id: "type_theory", name: "Type Theory", kind: "Castle", seat: "Seat of Rigor", x: 1335, y: 824, region: "foundations", level: "minor", story: "A constructive language where objects have types and proofs can be treated as mathematical inhabitants.", study: "Begin with typed lambda calculus and dependent types; later HoTT and proof assistants.", links: ["category_theory", "formal_systems", "computability"] },
+      { id: "category_theory", name: "Category Theory", kind: "Gray Castle", seat: "Seat of Rigor", x: 1324, y: 704, region: "foundations", level: "major monument", story: "The gray mystic district behind the white capital: objects, morphisms, functors, natural transformations, and the language of structure-preserving travel.", study: "Study categories, functors, natural transformations, limits, adjunctions, monads, abelian categories, and later higher categories.", links: ["algebra", "topology", "geometry"] },
+
+      { id: "number_theory", name: "Number Theory", kind: "Island Capital", seat: "Seat of Wonder", x: 760, y: 808, region: "number", level: "major monument", story: "The green island of ancient curiosity: simple numerical questions that open into immense depth.", study: "Study divisibility, primes, congruences, Diophantine equations, algebraic number theory, analytic number theory, and arithmetic geometry.", links: ["natural_numbers", "primes", "modular_arithmetic"] },
+      { id: "natural_numbers", name: "Natural Numbers", kind: "Town", seat: "Seat of Wonder", x: 700, y: 782, region: "number", level: "minor", story: "The first stable inhabitants of arithmetic: 1, 2, 3, ... and the structure of counting.", study: "Study induction, order, arithmetic operations, divisibility, and recursion.", links: ["counting", "primes", "euclidean_algorithm"] },
+      { id: "primes", name: "Prime Numbers", kind: "Castle", seat: "Seat of Wonder", x: 805, y: 775, region: "number", level: "major", story: "The irreducible stones of arithmetic: numbers divisible only by themselves and one.", study: "Study Euclid's theorem, unique factorization, congruences, distribution of primes, and analytic number theory later.", links: ["euclidean_algorithm", "modular_arithmetic", "number_theory"] },
+      { id: "euclidean_algorithm", name: "Euclidean Algorithm", kind: "Monument", seat: "Seat of Wonder", x: 678, y: 878, region: "number", level: "minor monument", story: "One of the oldest surviving algorithms: repeated division gives the greatest common divisor.", study: "Study gcd, Bézout identity, modular inverses, continued fractions, and algorithmic arithmetic.", links: ["procedure", "modular_arithmetic", "algorithms"] },
+      { id: "modular_arithmetic", name: "Modular Arithmetic", kind: "Castle", seat: "Seat of Wonder", x: 834, y: 884, region: "number", level: "minor", story: "Arithmetic on the clock: congruence, residues, and the arithmetic of remainders.", study: "Study congruences, units modulo n, Euler/Fermat theorems, CRT, and cryptographic applications.", links: ["primes", "cryptography", "algebra"] },
+      { id: "diophantine", name: "Diophantine Equations", kind: "Old Fort", seat: "Seat of Wonder", x: 762, y: 936, region: "number", level: "minor", story: "Equations asking for integer or rational solutions; ancient in appearance, modern in difficulty.", study: "Study linear/quadratic Diophantine equations, elliptic curves, rational points, and arithmetic geometry later.", links: ["equations", "number_theory", "algebraic_geometry"] },
+
+      { id: "algebra", name: "Algebra", kind: "Continent Capital", seat: "Seat of Structure", x: 355, y: 825, region: "algebra", level: "major monument", story: "The purple-gold continent of hidden law: equations, operations, symmetries, and structures.", study: "Begin with equations and linear algebra; continue through groups, rings, fields, modules, and Galois theory.", links: ["equations", "linear_algebra", "groups"] },
+      { id: "equations", name: "Equations", kind: "Landing Port", seat: "Seat of Structure", x: 451, y: 620, region: "algebra", level: "major", story: "The historical landing point of algebra: unknowns, relations, and the desire to solve.", study: "Study linear equations, polynomial equations, symbolic manipulation, and transformations.", links: ["polynomials", "diophantine", "calculus"] },
+      { id: "polynomials", name: "Polynomials", kind: "Castle", seat: "Seat of Structure", x: 574, y: 765, region: "algebra", level: "major", story: "Expressions built from powers and coefficients; the road from equation-solving to algebraic structure.", study: "Study roots, factorization, Euclidean algorithm in k[x], ideals, and algebraic geometry links.", links: ["equations", "fields", "galois"] },
+      { id: "linear_algebra", name: "Linear Algebra", kind: "Castle", seat: "Seat of Structure", x: 480, y: 1010, region: "algebra", level: "major", story: "The theory of vector spaces and linear maps; the great language shared by nearly all modern mathematics.", study: "Study vector spaces, bases, linear maps, matrices, eigenvalues, inner products, and canonical forms.", links: ["analysis", "geometry", "computation"] },
+      { id: "groups", name: "Group Theory", kind: "Fortress", seat: "Seat of Structure", x: 270, y: 930, region: "algebra", level: "major monument", story: "The abstract theory of symmetry, born from permutations and transformations, then generalized into a central algebraic force.", study: "Study groups, subgroups, actions, homomorphisms, quotient groups, Sylow theory, and representation theory.", links: ["galois", "representation", "topology"] },
+      { id: "rings", name: "Ring Theory", kind: "Castle", seat: "Seat of Structure", x: 650, y: 980, region: "algebra", level: "major", story: "Structures with addition and multiplication; the algebraic home of integers, polynomials, and ideals.", study: "Study ideals, quotients, factorization, polynomial rings, modules, and commutative algebra.", links: ["modules", "polynomials", "algebraic_geometry"] },
+      { id: "fields", name: "Field Theory", kind: "Castle", seat: "Seat of Structure", x: 580, y: 1122, region: "algebra", level: "major", story: "Algebraic worlds where addition, subtraction, multiplication, and division behave cleanly.", study: "Study field extensions, finite fields, algebraic elements, splitting fields, and Galois theory.", links: ["galois", "polynomials", "number_theory"] },
+      { id: "galois", name: "Galois Theory", kind: "Monument", seat: "Seat of Structure", x: 395, y: 1160, region: "algebra", level: "major monument", story: "The great fortress where equations, fields, and groups meet: solvability becomes symmetry.", study: "Study field extensions, automorphisms, normal/separable extensions, splitting fields, and the Galois correspondence.", links: ["groups", "fields", "number_theory"] },
+      { id: "modules", name: "Module Theory", kind: "Castle", seat: "Seat of Structure", x: 735, y: 1090, region: "algebra", level: "minor", story: "Linear algebra over rings; the passage from vector spaces to algebraic flexibility.", study: "Study modules, homomorphisms, exact sequences, Noetherian modules, and homological algebra.", links: ["rings", "homology", "category_theory"] },
+      { id: "representation", name: "Representation Theory", kind: "Major Fort", seat: "Seat of Structure", x: 255, y: 700, region: "algebra", level: "major", story: "A fort born in algebra that sends migrations everywhere: algebraic structures acting on vector spaces.", study: "Study group representations, characters, Lie theory, modules, harmonic analysis, and physics connections.", links: ["groups", "linear_algebra", "physics"] },
+
+      { id: "geometry", name: "Geometry", kind: "Continent Capital", seat: "Seat of Shape", x: 620, y: 340, region: "geometry", level: "major monument", story: "The green-white continent of form: shape, construction, space, curvature, and visual order.", study: "Begin with Euclidean geometry, then coordinates, projective geometry, manifolds, differential geometry, and algebraic geometry.", links: ["euclidean_geometry", "analytic_geometry", "differential_geometry"] },
+      { id: "euclidean_geometry", name: "Euclidean Geometry", kind: "Monument", seat: "Seat of Shape", x: 375, y: 455, region: "geometry", level: "major monument", story: "The ancient monument of axioms, constructions, lines, circles, triangles, and deductive proof.", study: "Study Euclid-style proof, congruence, similarity, area, circles, and classical constructions.", links: ["proof", "shape", "analytic_geometry"] },
+      { id: "analytic_geometry", name: "Analytic Geometry", kind: "Castle", seat: "Seat of Shape", x: 720, y: 470, region: "geometry", level: "major", story: "The marriage of algebra and geometry through coordinates.", study: "Study coordinate systems, equations of curves, conics, transformations, and the algebraic description of shape.", links: ["equations", "algebraic_geometry", "calculus"] },
+      { id: "projective_geometry", name: "Projective Geometry", kind: "Castle", seat: "Seat of Shape", x: 830, y: 295, region: "geometry", level: "minor", story: "Geometry of perspective, incidence, and points at infinity.", study: "Study projective spaces, homogeneous coordinates, duality, conics, and links to algebraic geometry.", links: ["analytic_geometry", "algebraic_geometry"] },
+      { id: "non_euclidean", name: "Non-Euclidean Geometry", kind: "Fort", seat: "Seat of Shape", x: 520, y: 205, region: "geometry", level: "minor", story: "The discovery that Euclid's parallel postulate was not the only possible geometry.", study: "Study hyperbolic and elliptic geometries, models, curvature intuition, and the road to Riemannian geometry.", links: ["differential_geometry", "topology"] },
+      { id: "differential_geometry", name: "Differential Geometry", kind: "Castle", seat: "Seat of Shape", x: 895, y: 385, region: "geometry", level: "major", story: "Geometry with calculus: curves, surfaces, manifolds, curvature, connections, and metrics.", study: "Study manifolds, tangent spaces, differential forms, Riemannian metrics, geodesics, and curvature.", links: ["analysis", "topology", "physics"] },
+      { id: "algebraic_geometry", name: "Algebraic Geometry", kind: "Border Citadel", seat: "Shape × Structure", x: 870, y: 600, region: "geometry", level: "major monument", story: "The deep border citadel between algebra and geometry: spaces described by equations.", study: "Study affine/projective varieties, ideals, coordinate rings, sheaves, schemes, and eventually stacks/derived geometry.", links: ["polynomials", "rings", "geometry"] },
+
+      { id: "topology", name: "Topology", kind: "Continent Capital", seat: "Seat of Essence", x: 1230, y: 390, region: "topology", level: "major monument", story: "The smaller continent of essence: shape after stretching, bending, and stripping away metric detail.", study: "Study continuity, open sets, compactness, connectedness, fundamental group, homology, and homotopy.", links: ["continuity", "topological_spaces", "homology"] },
+      { id: "continuity", name: "Continuity", kind: "Landing Port", seat: "Seat of Essence", x: 1088, y: 330, region: "topology", level: "major", story: "The primitive thread of topology and analysis: no sudden breaks.", study: "Study epsilon-delta continuity, topological continuity, homeomorphisms, and continuous deformation.", links: ["limits", "topological_spaces", "analysis"] },
+      { id: "topological_spaces", name: "Topological Spaces", kind: "Castle", seat: "Seat of Essence", x: 1315, y: 305, region: "topology", level: "major", story: "The abstract language of open sets and continuity.", study: "Study open/closed sets, bases, subspaces, products, quotients, separation, compactness, and connectedness.", links: ["set_theory", "compactness", "continuity"] },
+      { id: "compactness", name: "Compactness", kind: "Fort", seat: "Seat of Essence", x: 1370, y: 480, region: "topology", level: "minor", story: "The principle that infinite spaces can behave finitely enough to control.", study: "Study open covers, sequential compactness, Heine-Borel, Tychonoff, and compactness in analysis and logic.", links: ["analysis", "logic", "functional_analysis"] },
+      { id: "fundamental_group", name: "Fundamental Group", kind: "Castle", seat: "Seat of Essence", x: 1182, y: 540, region: "topology", level: "minor", story: "Loops in a space organized into algebra: topology begins speaking group theory.", study: "Study paths, homotopy of loops, covering spaces, van Kampen theorem, and examples.", links: ["groups", "homology", "topology"] },
+      { id: "homology", name: "Homology", kind: "Monument", seat: "Seat of Essence", x: 1282, y: 560, region: "topology", level: "major", story: "Algebraic shadows of holes and shape: one of topology's great exports.", study: "Study simplicial/singular homology, exact sequences, cohomology, and links to algebra and geometry.", links: ["modules", "category_theory", "algebraic_geometry"] },
+
+      { id: "analysis", name: "Analysis", kind: "Continent Capital", seat: "Seat of Distance", x: 1585, y: 640, region: "analysis", level: "major monument", story: "The red continent of distance, limits, functions, infinite processes, and controlled change.", study: "Begin with calculus, then rigorous limits, real analysis, measure, functional analysis, and differential equations.", links: ["calculus", "limits", "measure"] },
+      { id: "calculus", name: "Calculus", kind: "Monument", seat: "Seat of Distance", x: 1450, y: 525, region: "analysis", level: "major monument", story: "The classical engine of change and accumulation: derivatives, integrals, and infinite processes.", study: "Study differentiation, integration, series, applications, and the later need for rigorous analysis.", links: ["motion", "limits", "differential_equations"] },
+      { id: "limits", name: "Limits", kind: "Castle", seat: "Seat of Distance", x: 1630, y: 505, region: "analysis", level: "major", story: "The rigorous language of approaching: the foundation of modern analysis.", study: "Study sequences, functions, epsilon-delta definitions, continuity, differentiability, and convergence.", links: ["continuity", "real_analysis", "calculus"] },
+      { id: "real_analysis", name: "Real Analysis", kind: "Castle", seat: "Seat of Distance", x: 1780, y: 610, region: "analysis", level: "major", story: "The rigorous study of real functions, convergence, continuity, differentiation, and integration.", study: "Study completeness, compactness, sequences, series, continuity, derivatives, Riemann integration, and uniform convergence.", links: ["limits", "measure", "functional_analysis"] },
+      { id: "complex_analysis", name: "Complex Analysis", kind: "Castle", seat: "Seat of Distance", x: 1710, y: 760, region: "analysis", level: "major", story: "Functions of a complex variable: rigid, beautiful, and unexpectedly powerful.", study: "Study holomorphic functions, Cauchy theory, residues, conformal maps, and analytic continuation.", links: ["real_analysis", "geometry", "number_theory"] },
+      { id: "measure", name: "Measure Theory", kind: "Fortress", seat: "Seat of Distance", x: 1510, y: 815, region: "analysis", level: "major", story: "The theory of size and integration beyond classical calculus.", study: "Study sigma-algebras, measures, measurable functions, Lebesgue integration, convergence theorems, and Lp spaces.", links: ["probability", "real_analysis", "functional_analysis"] },
+      { id: "functional_analysis", name: "Functional Analysis", kind: "Castle", seat: "Seat of Distance", x: 1366, y: 700, region: "analysis", level: "major", story: "Analysis in infinite-dimensional spaces: Banach spaces, Hilbert spaces, and operators.", study: "Study normed spaces, Banach/Hilbert spaces, bounded operators, duality, compactness, and spectral theory.", links: ["linear_algebra", "measure", "operator_theory"] },
+      { id: "differential_equations", name: "Differential Equations", kind: "Great City", seat: "Seat of Distance", x: 1900, y: 705, region: "analysis", level: "major", story: "Equations governing change: ODE, PDE, dynamics, flows, and physical laws.", study: "Study ODE, PDE classifications, weak solutions, stability, dynamical systems, Sobolev spaces, and applications.", links: ["calculus", "physics", "probability"] },
+
+      { id: "probability", name: "Probability", kind: "Continent Capital", seat: "Seat of Uncertainty", x: 1570, y: 1040, region: "probability", level: "major monument", story: "The blue maritime kingdom of chance, uncertainty, distributions, and stochastic behavior.", study: "Study probability spaces, random variables, expectation, convergence, stochastic processes, and statistics.", links: ["random_variables", "measure_probability", "statistics"] },
+      { id: "random_variables", name: "Random Variables", kind: "Castle", seat: "Seat of Uncertainty", x: 1430, y: 950, region: "probability", level: "major", story: "Measurable quantities whose values are governed by chance.", study: "Study distributions, expectation, variance, independence, conditioning, and convergence.", links: ["probability", "measure", "statistics"] },
+      { id: "measure_probability", name: "Measure Probability", kind: "Port", seat: "Uncertainty × Distance", x: 1335, y: 860, region: "probability", level: "major", story: "The narrow passage where probability becomes measure-theoretic and meets analysis.", study: "Study probability spaces, measurable functions, expectation as integral, convergence theorems, and laws of large numbers.", links: ["measure", "random_variables", "stochastic_processes"] },
+      { id: "statistics", name: "Statistics", kind: "Coastal Castle", seat: "Seat of Uncertainty", x: 1695, y: 1125, region: "probability", level: "minor", story: "Inference under uncertainty: estimation, testing, models, and data.", study: "Study estimators, likelihood, confidence intervals, hypothesis testing, regression, Bayesian methods, and asymptotics.", links: ["probability", "computation", "applied"] },
+      { id: "stochastic_processes", name: "Stochastic Processes", kind: "Sea Fort", seat: "Seat of Uncertainty", x: 1784, y: 1010, region: "probability", level: "minor", story: "Randomness evolving through time: chains, martingales, Brownian motion, and stochastic dynamics.", study: "Study Markov chains, martingales, Brownian motion, stochastic calculus, and SPDE later.", links: ["probability", "physics", "differential_equations"] },
+
+      { id: "computation", name: "Computation", kind: "Continent Capital", seat: "Seat of Procedure", x: 1040, y: 1420, region: "computation", level: "major monument", story: "The southern sand-stone civilization of algorithms, execution, machines, and effective procedure.", study: "Study algorithms, data structures, computability, complexity, symbolic computation, and formal verification.", links: ["algorithms", "computability", "complexity"] },
+      { id: "algorithms", name: "Algorithms", kind: "Castle", seat: "Seat of Procedure", x: 810, y: 1355, region: "computation", level: "major", story: "Finite procedures designed to solve problems correctly and efficiently.", study: "Study correctness, invariants, recursion, greedy methods, dynamic programming, graph algorithms, and complexity.", links: ["procedure", "data_structures", "complexity"] },
+      { id: "data_structures", name: "Data Structures", kind: "Fort", seat: "Seat of Procedure", x: 620, y: 1450, region: "computation", level: "minor", story: "Ways of organizing information so procedures can act efficiently.", study: "Study arrays, lists, stacks, queues, trees, heaps, hash tables, graphs, and amortized analysis.", links: ["algorithms", "complexity"] },
+      { id: "computability", name: "Computability", kind: "Castle", seat: "Seat of Procedure", x: 1050, y: 1290, region: "computation", level: "major", story: "The theory of what can be computed at all.", study: "Study Turing machines, recursive functions, decidability, reductions, and undecidability.", links: ["formal_systems", "complexity", "logic"] },
+      { id: "complexity", name: "Complexity Theory", kind: "Fortress", seat: "Seat of Procedure", x: 1235, y: 1420, region: "computation", level: "major", story: "The theory of computational resources: time, space, reductions, hardness, and classes.", study: "Study P, NP, reductions, NP-completeness, space complexity, randomized complexity, and circuit complexity.", links: ["algorithms", "open_problems", "cryptography"] },
+      { id: "symbolic_computation", name: "Symbolic Computation", kind: "Port", seat: "Seat of Procedure", x: 930, y: 1538, region: "computation", level: "minor", story: "Computation with exact mathematical objects: polynomials, ideals, formulas, and algebraic structures.", study: "Study computer algebra, Gröbner bases, resultants, exact arithmetic, and computational algebraic geometry.", links: ["algebra", "polynomials", "cryptography"] },
+
+      { id: "discrete", name: "Discrete Archipelago", kind: "Island Formation", seat: "Seat of Pattern", x: 920, y: 1198, region: "discrete", level: "major monument", story: "The Stepstones of finite structure: many islands, each with its own rules, counts, graphs, and patterns.", study: "Study counting, graphs, extremal methods, Ramsey theory, matroids, finite geometry, and additive combinatorics.", links: ["graph_theory", "combinatorics", "number_theory"] },
+      { id: "graph_theory", name: "Graph Theory", kind: "Island Castle", seat: "Seat of Pattern", x: 765, y: 1090, region: "discrete", level: "major", story: "The study of vertices, edges, connectivity, coloring, paths, cycles, and networks.", study: "Study basic graphs, trees, connectivity, Euler/Hamilton paths, coloring, planarity, matchings, and graph minors later.", links: ["algorithms", "combinatorics", "topology"] },
+      { id: "combinatorics", name: "Combinatorics", kind: "Island Castle", seat: "Seat of Pattern", x: 1014, y: 1092, region: "discrete", level: "major", story: "The mathematics of counting, arrangements, configurations, and finite patterns.", study: "Study binomial coefficients, generating functions, inclusion-exclusion, extremal combinatorics, and probabilistic methods.", links: ["counting", "graph_theory", "probability"] },
+
+      { id: "applied", name: "Applied Kingdom", kind: "Intercontinental Kingdom", seat: "Seat of Control", x: 1425, y: 1355, region: "applied", level: "major", story: "A mixed kingdom founded by travelers from analysis, probability, and computation: modeling, optimization, simulation, and control.", study: "Study optimization, numerical analysis, control theory, modeling, scientific computing, and applied probability.", links: ["statistics", "numerical", "optimization"] },
+      { id: "optimization", name: "Optimization", kind: "Fort", seat: "Seat of Control", x: 1338, y: 1285, region: "applied", level: "minor", story: "The art of choosing the best possible object under constraints.", study: "Study convexity, gradients, Lagrange multipliers, linear programming, convex optimization, and algorithms.", links: ["analysis", "computation", "applied"] },
+      { id: "numerical", name: "Numerical Analysis", kind: "Port", seat: "Seat of Control", x: 1508, y: 1450, region: "applied", level: "minor", story: "Approximate computation of continuous mathematics: error, stability, convergence, and simulation.", study: "Study floating point, interpolation, numerical linear algebra, root-finding, ODE/PDE solvers, and stability.", links: ["analysis", "computation", "physics"] },
+
+      { id: "physics", name: "Mathematical Physics", kind: "Far Continent", seat: "Seat of Cosmos", x: 2040, y: 1160, region: "physics", level: "major monument", story: "The distant supercontinent of cosmos: mathematics of physical law, fields, particles, geometry, and dynamics.", study: "Study mechanics, differential equations, geometry, quantum mechanics, statistical mechanics, gauge theory, and QFT interfaces.", links: ["differential_equations", "stochastic_processes", "symplectic"] },
+      { id: "symplectic", name: "Symplectic Geometry", kind: "Cosmic Port", seat: "Seat of Cosmos", x: 1908, y: 1000, region: "physics", level: "minor", story: "Geometry of phase space and Hamiltonian mechanics.", study: "Study differential forms, manifolds, Hamiltonian systems, symplectic manifolds, and moment maps.", links: ["differential_geometry", "physics"] },
+      { id: "qft", name: "Quantum Field Theory", kind: "Distant Tower", seat: "Seat of Cosmos", x: 2160, y: 1280, region: "physics", level: "minor", story: "A frontier language of fields, particles, symmetry, and quantization.", study: "Study quantum mechanics, special relativity, representation theory, functional integration heuristics, and gauge theory.", links: ["representation", "physics", "open_problems"] },
+
+      { id: "open_problems", name: "The Unconquered", kind: "Dark Land", seat: "Open Problems", x: 1330, y: 220, region: "open", level: "major monument", story: "The northern dark land: famous conjectures, unsolved problems, and mathematical territories not yet conquered.", study: "Approach only through mature roads. Every open problem has a lineage of prerequisites and partial results.", links: ["riemann_hypothesis", "p_vs_np", "hodge"] },
+      { id: "riemann_hypothesis", name: "Riemann Hypothesis", kind: "Black Tower", seat: "The Unconquered", x: 1030, y: 170, region: "open", level: "minor", story: "A central conjecture about the zeros of the zeta function and the distribution of prime numbers.", study: "Study complex analysis, analytic number theory, zeta functions, prime number theorem, and spectral viewpoints.", links: ["number_theory", "complex_analysis", "open_problems"] },
+      { id: "p_vs_np", name: "P vs NP", kind: "Black Tower", seat: "The Unconquered", x: 1598, y: 172, region: "open", level: "minor", story: "The central question of computational complexity: is efficient verification the same as efficient solution?", study: "Study algorithms, Turing machines, reductions, NP-completeness, circuit complexity, and proof complexity.", links: ["complexity", "algorithms", "open_problems"] },
+      { id: "hodge", name: "Hodge Conjecture", kind: "Black Tower", seat: "The Unconquered", x: 1845, y: 290, region: "open", level: "minor", story: "A deep conjecture connecting topology, geometry, and algebraic cycles.", study: "Study algebraic topology, complex manifolds, algebraic geometry, cohomology, and Hodge theory.", links: ["algebraic_geometry", "homology", "open_problems"] }
+    ];
+
+    const nodeMap = new Map(nodes.map(n => [n.id, n]));
+
+    let transform = { x: 0, y: 0, k: 0.62 };
+    let isDragging = false;
+    let start = { x: 0, y: 0 };
+    let activeId = null;
+
+    function applyTransform() {
+      viewport.setAttribute("transform", `translate(${transform.x} ${transform.y}) scale(${transform.k})`);
+      document.body.classList.toggle("zoom-mid", transform.k > 0.9);
+      document.body.classList.toggle("zoom-high", transform.k > 1.45);
+    }
+
+    function clampZoom(k) {
+      return Math.max(0.36, Math.min(2.8, k));
+    }
+
+    function screenPoint(evt) {
+      const pt = svg.createSVGPoint();
+      pt.x = evt.clientX;
+      pt.y = evt.clientY;
+      return pt.matrixTransform(svg.getScreenCTM().inverse());
+    }
+
+    function zoomAt(factor, sx, sy) {
+      const before = screenPoint({ clientX: sx, clientY: sy });
+      const oldK = transform.k;
+      const nextK = clampZoom(transform.k * factor);
+      const realFactor = nextK / oldK;
+      transform.x = before.x - (before.x - transform.x) * realFactor;
+      transform.y = before.y - (before.y - transform.y) * realFactor;
+      transform.k = nextK;
+      applyTransform();
+    }
+
+    function resetView() {
+      transform = { x: 0, y: 0, k: window.innerWidth < 720 ? 0.42 : 0.62 };
+      activeId = null;
+      document.querySelectorAll(".node.active").forEach(el => el.classList.remove("active"));
+      applyTransform();
+    }
+
+    function createNodes() {
+      const group = document.getElementById("nodes");
+      for (const n of nodes) {
+        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        g.classList.add("node");
+        if (n.level.includes("major")) g.classList.add("major");
+        if (n.level.includes("minor")) g.classList.add("minor");
+        if (n.level.includes("monument")) g.classList.add("monument");
+        if (n.kind.toLowerCase().includes("ruin")) g.classList.add("ruin");
+        if (n.level.includes("minor")) g.classList.add("zoom-hidden-1");
+        if (n.kind.includes("Black Tower") || n.kind.includes("Distant Tower")) g.classList.add("zoom-hidden-2");
+
+        g.dataset.id = n.id;
+        g.setAttribute("transform", `translate(${n.x}, ${n.y})`);
+
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        const radius = n.level.includes("major monument") ? 13 : n.level.includes("major") ? 10 : 7;
+        circle.setAttribute("r", radius);
+        circle.setAttribute("fill", REGION[n.region] || "#ddd");
+
+        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        text.setAttribute("x", radius + 8);
+        text.setAttribute("y", 5);
+        text.textContent = n.name;
+
+        g.appendChild(circle);
+        g.appendChild(text);
+        g.addEventListener("click", (evt) => {
+          evt.stopPropagation();
+          openNode(n.id);
+        });
+
+        group.appendChild(g);
+      }
+    }
+
+    function openNode(id) {
+      const n = nodeMap.get(id);
+      if (!n) return;
+
+      activeId = id;
+      document.querySelectorAll(".node.active").forEach(el => el.classList.remove("active"));
+      const el = document.querySelector(`.node[data-id="${id}"]`);
+      if (el) el.classList.add("active");
+
+      panelKind.textContent = n.kind;
+      panelTitle.textContent = n.name;
+      panelSeat.textContent = n.seat;
+      panelStory.textContent = n.story;
+      panelStudy.textContent = n.study;
+
+      panelLinks.innerHTML = "";
+      for (const linked of n.links || []) {
+        const target = nodeMap.get(linked);
+        const chip = document.createElement("button");
+        chip.className = "chip";
+        chip.type = "button";
+        chip.textContent = target ? target.name : linked;
+        chip.addEventListener("click", () => {
+          if (target) {
+            travelTo(target.id);
+          }
+        });
+        panelLinks.appendChild(chip);
+      }
+
+      panel.classList.add("open");
+    }
+
+    function travelTo(id) {
+      const n = nodeMap.get(id);
+      if (!n) return;
+      const targetK = Math.max(transform.k, 1.15);
+      transform.k = targetK;
+      transform.x = 1200 - n.x * targetK;
+      transform.y = 800 - n.y * targetK;
+      applyTransform();
+      openNode(id);
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2200);
+    }
+
+    shell.addEventListener("pointerdown", (evt) => {
+      isDragging = true;
+      shell.classList.add("dragging");
+      start.x = evt.clientX - transform.x;
+      start.y = evt.clientY - transform.y;
+      shell.setPointerCapture(evt.pointerId);
+    });
+
+    shell.addEventListener("pointermove", (evt) => {
+      if (!isDragging) return;
+      transform.x = evt.clientX - start.x;
+      transform.y = evt.clientY - start.y;
+      applyTransform();
+    });
+
+    shell.addEventListener("pointerup", (evt) => {
+      isDragging = false;
+      shell.classList.remove("dragging");
+      try { shell.releasePointerCapture(evt.pointerId); } catch (_) {}
+    });
+
+    shell.addEventListener("wheel", (evt) => {
+      evt.preventDefault();
+      const factor = evt.deltaY < 0 ? 1.12 : 0.89;
+      zoomAt(factor, evt.clientX, evt.clientY);
+    }, { passive: false });
+
+    document.getElementById("zoomIn").addEventListener("click", () => zoomAt(1.18, window.innerWidth / 2, window.innerHeight / 2));
+    document.getElementById("zoomOut").addEventListener("click", () => zoomAt(0.84, window.innerWidth / 2, window.innerHeight / 2));
+    document.getElementById("resetView").addEventListener("click", resetView);
+    document.getElementById("chronicleNext").addEventListener("click", () => showToast("Chronicle mode will animate the seismic eras in v0.2."));
+
+    closePanel.addEventListener("click", () => {
+      panel.classList.remove("open");
+      activeId = null;
+      document.querySelectorAll(".node.active").forEach(el => el.classList.remove("active"));
+    });
+
+    svg.addEventListener("click", () => {
+      if (!activeId) return;
+      panel.classList.remove("open");
+      activeId = null;
+      document.querySelectorAll(".node.active").forEach(el => el.classList.remove("active"));
+    });
+
+    window.addEventListener("keydown", (evt) => {
+      if (evt.key === "Escape") {
+        panel.classList.remove("open");
+        activeId = null;
+        document.querySelectorAll(".node.active").forEach(el => el.classList.remove("active"));
+      }
+      if (evt.key === "ArrowRight") {
+        showToast("Chronicle step: origin → rupture → settlements → modern continents. Full animation later.");
+      }
+    });
+
+    createNodes();
+    resetView();
+  </script>
+</body>
+</html>
